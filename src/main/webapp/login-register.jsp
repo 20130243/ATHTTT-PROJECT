@@ -168,7 +168,7 @@
                                                 </small>
                                                 <input type="password" id="password" name="password"
                                                        placeholder="Mật nhẩu" aria-describedby="passwordHelpInline"
-                                                       minlength="6"
+                                                       minlength="8"
                                                        required/>
                                                 <span class="text-danger"
                                                       id="register-repassword-error"></span>
@@ -176,10 +176,19 @@
                                                     Mật khẩu phải trùng với mật khẩu ở trên
                                                 </small>
                                                 <input type="password" id="repassword" placeholder="Nhập lại mật nhẩu "
-                                                       minlength="6" aria-describedby="passcomfirmHelpInline" required/>
+                                                       minlength="8" aria-describedby="passcomfirmHelpInline" required/>
                                             </div>
                                             <div class="button-box">
-                                                <button class="register-btn btn" type="submit"
+                                                <div class="login-toggle-btn">
+                                                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required
+                                                           value="checked"
+                                                           onchange="changeTerm()"
+                                                    />
+                                                    <label for="agreeTerms">
+                                                        Tôi đồng ý với <a style="color: #00adef; margin-left: 5px" href="#"> Điều khoản sử dụng</a>
+                                                    </label>
+                                                </div>
+                                                <button class="register-btn btn" type="submit" disabled
                                                         onclick="return check_register()">
                                                     <span>Đăng kí</span>
                                                 </button>
@@ -307,6 +316,19 @@
         }, time * 60 * 1000)
         return 0;
     }
+
+    const changeTerm = () => {
+        var checkTerm = document.getElementById("agreeTerms");
+        var buttonRegister = document.getElementsByClassName("register-btn")[0];
+
+        if(checkTerm.checked) {
+            buttonRegister.disabled = false;
+        } else {
+            buttonRegister.disabled = true;
+        }
+    }
+
+
 
 
 
