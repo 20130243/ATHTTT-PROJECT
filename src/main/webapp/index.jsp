@@ -134,6 +134,7 @@
                 %>
             </div>
         </div>
+    </div>
 </section>
 <!-- Banner Section End -->
 
