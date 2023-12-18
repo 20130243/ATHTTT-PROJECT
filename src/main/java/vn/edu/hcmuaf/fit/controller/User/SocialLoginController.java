@@ -57,12 +57,12 @@ public class SocialLoginController extends HttpServlet {
             if (userService.checkEmail(email)) {
                 user = userService.loginSocial(email);
                 session.setAttribute("user", user);
-                response.sendRedirect("/");
+                response.sendRedirect("./");
             } else {
                 userService.insert(user, password);
                 user = userService.loginSocial(email);
                 session.setAttribute("user", user);
-                response.sendRedirect("/");
+                response.sendRedirect("./");
             }
         }
     }

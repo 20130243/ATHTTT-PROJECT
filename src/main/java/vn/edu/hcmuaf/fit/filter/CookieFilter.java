@@ -38,6 +38,7 @@ public class CookieFilter implements Filter {
                         adminService.logLogin(admin.getId(), request.getRemoteAddr(), "LOGIN COOKIE");
                         System.out.println("admin cookie checked");
                         session.setAttribute("admin", admin);
+                        new AdminService().logLogin(admin.getId(),request.getRemoteAddr(),"LOGIN_COOKIE");
                     }
                 }
                 if (cookie.getName().equals("tokenID") && session.getAttribute("user") == null) {
@@ -47,6 +48,7 @@ public class CookieFilter implements Filter {
                     if (user != null) {
                         userService.logLogin(user.getId(), request.getRemoteAddr(), "LOGIN COOKIE");
                         System.out.println("User cookie checked");
+                        userService.logLogin(user.getId(),request.getRemoteAddr(), "LOGGIN_COOKIE");
                         session.setAttribute("user", user);
                     }
                 }

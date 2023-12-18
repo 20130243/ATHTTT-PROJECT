@@ -33,14 +33,14 @@ public class ForgotPasswordController extends HttpServlet {
                     if(count == 0) {
                         count++;
                         System.out.println("Lần đầu " +count);
-                        userService.passwordRecovery( email);
+                        userService.passwordRecovery(request.getRequestURL().toString(), email);
                         userService.insertCountForgetPassword(email, current);
                         response.getWriter().write("0");
                     } else {
                         if( count <= 5) {
                             count++;
                             System.out.println("các lần tiếp theo " +count);
-                            userService.passwordRecovery( email);
+                            userService.passwordRecovery(request.getRequestURL().toString(), email);
                             userService.updateCountForgetPassword(email, current, count);
                             response.getWriter().write("0");
                         } else {
@@ -53,6 +53,7 @@ public class ForgotPasswordController extends HttpServlet {
                     response.getWriter().write("1");
                 }
             } catch (Exception e) {
+                response.getWriter().write(e.toString());
                 e.printStackTrace();
             }
         } else {

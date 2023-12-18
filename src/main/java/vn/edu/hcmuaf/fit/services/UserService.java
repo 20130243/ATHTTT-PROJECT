@@ -124,11 +124,23 @@ public class UserService {
         return true;
     }
 
-    public boolean passwordRecovery(String email) {
+    public boolean passwordRecovery(String URL, String email) {
         User user = getByEmail(email);
+
         if (user != null) {
+
+            String[] parts = URL.split("/");
+            // get the third part of the string (the host)
+            String host = parts[2];
+
             Token token = generateToken(user);
-            String link = "http://localhost:8080/forgotpassword?token=" + token.getToken();
+//            String link = "http://localhost:8080/forgotpassword?token=" + token.getToken();
+            String url = "http://" + host + "/" + "HaHaTiShop";
+            String link = url + "/forgotpassword?token=" + token.getToken();
+            System.out.println(user);
+            System.out.println(token);
+            System.out.println("q");
+
             String text = "Xin chào " + user.getName() + ",\n" +
                     "\n" +
                     "Ai đó đã yêu cầu mật khẩu mới cho tài khoản của bạn  được liên kết với Email: " + user.getEmail() + " .\n" +
@@ -137,10 +149,12 @@ public class UserService {
                     "\n" +
                     "The HaHaTi team" +
                     "\n" +
-                    "http://localhost:8080/login";
+                    URL + "HaHaTiShop/login";
+
             return sendMail(email, "Password recovery", text);
 
         } else {
+            System.out.println("f");
             return false;
         }
 
@@ -174,8 +188,6 @@ public class UserService {
             user.setToken((String) map.get("token"));
             return user;
         }
-
-
         return null;
     }
 
@@ -187,6 +199,10 @@ public class UserService {
 
     public int getTotal() {
         return dao.getTotal();
+    }
+
+    public int getUserNew() {
+        return dao.getUserNew();
     }
 
     public List<User> getPaging(int index) {
@@ -293,6 +309,7 @@ public class UserService {
     }
 
     public static void main(String[] args) {
-        new UserService().logBanned(8, "admin", 7);
+
+//        new UserService().passwordRecovery("buithanhdam02@gmail.com");
     }
 }

@@ -71,7 +71,7 @@
               <div id="lg1" class="tab-pane active">
                 <div class="login-form-container">
                   <div class="login-register-form">
-                    <form action="/changePassword" method="get">
+                    <form action="./changePassword" method="get" id="changePassword">
                       <div class="login-input-box">
                         <input
                                 type="password"
@@ -83,14 +83,22 @@
                                 name="password-new"
                                 placeholder="Mật nhẩu mới"
                         />
-
                         <input
                                 type="password"
                                 name="password-new-confirm"
                                 placeholder="Nhập lại mật nhẩu "
                         />
                       </div>
-                      <span class="text-danger" id="register-username-error">${requestScope['erorr_changePassword']}</span>
+                      <span class="text-danger" id="register-username-error"></span>
+                      <input
+                              type="file"
+                              name="private-key"
+                              title="Private key"
+                              accept=".key"
+                              onchange="validateFile()"
+                              required
+                      />
+                      <span class="text-danger" id="file-error"></span>
                       <div class="button-box">
                         <button class="register-btn btn" type="submit">
                           <span>Đổi mật khẩu</span>
@@ -150,5 +158,47 @@
 <script src="assets/js/vendor/account/js/plugins/jqueryui.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/ajax-contact.js"></script>
 <script src="assets/js/vendor/account/js/main.js"></script>
+<script>
+  $("#changePassword").submit(function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: $(this).attr('method'),
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      success: function (data) {
+        if (1 == data) {
+          $("#register-username-error").text("Mật khẩu cũ không đúng, hoặc mật khẩu mới không khớp! ");
+        } else {
+          window.location.href = "account";
+        }
+      },
+      error: function (data) {
+        console.log('An error occurred.');
+        console.log(data);
+      },
+    });
+  })
+
+  const validateFile = () => {
+    var fileInput = document.querySelector('input[name="private-key"]');
+    var errorSpan = document.getElementById('file-error');
+
+    // Kiểm tra nếu có file được chọn
+    if (fileInput.files.length > 0) {
+      var fileName = fileInput.files[0].name;
+
+      // Kiểm tra nếu tên file không kết thúc bằng ".key"
+      if (!fileName.endsWith('.key')) {
+        errorSpan.innerText = 'Vui lòng chọn file có đuôi ".key"';
+        fileInput.value = ''; // Xóa giá trị file nếu không hợp lệ
+        return;
+      }
+    }
+
+    // Nếu không có lỗi, xóa thông báo lỗi
+    errorSpan.innerText = '';
+  }
+
+</script>
 </body>
 </html>

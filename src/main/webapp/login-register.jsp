@@ -104,7 +104,7 @@
                                                     <input id="checkSave" type="checkbox" name="save"
                                                            value="checked"/>
                                                     <label for="checkSave">Lưu thông tin</label>
-                                                    <a href="/forgotPass">Quên mật khẩu?</a>
+                                                    <a href="./forgotPass">Quên mật khẩu?</a>
                                                 </div>
 
                                                 <div class="button-box"
@@ -129,7 +129,7 @@
                             <div id="lg2" class="tab-pane">
                                 <div class="login-form-container">
                                     <div class="login-register-form">
-                                        <form action="/register" method="post" id="register">
+                                        <form action="${pageContext.request.contextPath}/register" method="post" id="register">
                                             <div class="login-input-box">
                                                 <span class="text-danger" id="register-name-error"></span>
                                                 <small id="nameHelpInline" class="text-muted mb-3">
@@ -168,7 +168,7 @@
                                                 </small>
                                                 <input type="password" id="password" name="password"
                                                        placeholder="Mật nhẩu" aria-describedby="passwordHelpInline"
-                                                       minlength="6"
+                                                       minlength="8"
                                                        required/>
                                                 <span class="text-danger"
                                                       id="register-repassword-error"></span>
@@ -176,10 +176,19 @@
                                                     Mật khẩu phải trùng với mật khẩu ở trên
                                                 </small>
                                                 <input type="password" id="repassword" placeholder="Nhập lại mật nhẩu "
-                                                       minlength="6" aria-describedby="passcomfirmHelpInline" required/>
+                                                       minlength="8" aria-describedby="passcomfirmHelpInline" required/>
                                             </div>
                                             <div class="button-box">
-                                                <button class="register-btn btn" type="submit"
+                                                <div class="login-toggle-btn">
+                                                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required
+                                                           value="checked"
+                                                           onchange="changeTerm()"
+                                                    />
+                                                    <label for="agreeTerms">
+                                                        Tôi đồng ý với <a style="color: #00adef; margin-left: 5px" href="#"> Điều khoản sử dụng</a>
+                                                    </label>
+                                                </div>
+                                                <button class="register-btn btn" type="submit" disabled
                                                         onclick="return check_register()">
                                                     <span>Đăng kí</span>
                                                 </button>
@@ -249,7 +258,7 @@
                 if (1 == data) {
                     $("#login-username-error").text("Tài khoản hoặc mật khẩu không đúng");
                 } else if (2 == data) {
-                    window.location.href = "/";
+                    window.location.href = "./";
                 } else {
                     timer = parseInt(data);
                     if(!isNaN(timer)) {
@@ -288,7 +297,7 @@
                 if (1 == data) {
                     $("#register-username-error").text("Tên đăng nhập đã được sử dụng");
                 } else if (2 == data) {
-                    window.location.href = "/";
+                    window.location.href = "./";
                 }
 
             },
@@ -307,6 +316,19 @@
         }, time * 60 * 1000)
         return 0;
     }
+
+    const changeTerm = () => {
+        var checkTerm = document.getElementById("agreeTerms");
+        var buttonRegister = document.getElementsByClassName("register-btn")[0];
+
+        if(checkTerm.checked) {
+            buttonRegister.disabled = false;
+        } else {
+            buttonRegister.disabled = true;
+        }
+    }
+
+
 
 
 

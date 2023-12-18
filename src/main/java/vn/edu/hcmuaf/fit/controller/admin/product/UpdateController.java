@@ -78,7 +78,7 @@ public class UpdateController extends HttpServlet {
             //new image
             for (Part image : fileParts) {
                 String fileName = Path.of(image.getSubmittedFileName()).getFileName().toString();
-                String realPath = request.getServletContext().getRealPath("/img/ProductImport");
+                String realPath = request.getServletContext().getRealPath("img/ProductImport");
                 if (!fileName.equals("")) {
                     //extension --> filename
                     String extension = ".";
@@ -96,7 +96,7 @@ public class UpdateController extends HttpServlet {
                     String path = realPath + "/" + imageName;
                     image.write(path);
                     //save url image
-                    String url = "/img/ProductImport/" + imageName;
+                    String url = "img/ProductImport/" + imageName;
                     images.add(new Image(0, imageName, url, id, 3));
                 }
             }

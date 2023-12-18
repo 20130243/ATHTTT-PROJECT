@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.dao;
 
+import vn.edu.hcmuaf.fit.bean.User;
 import vn.edu.hcmuaf.fit.db.JDBIConnector;
 
 import java.sql.Date;
@@ -245,10 +246,17 @@ public class UserDAO extends RD {
 
     public static void main(String[] args) {
 //        System.out.println(new UserDAO().getAll());
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        java.util.Date date = cal.getTime();
-        System.out.println(new UserDAO().getCountForgotPassword("tinhle2772002@gmail.com", new java.sql.Date(date.getTime())));
+//        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+//        java.util.Date date = cal.getTime();
+//        System.out.println(new UserDAO().getCountForgotPassword("tinhle2772002@gmail.com", new java.sql.Date(date.getTime())));
+
+
+
     }
 
 
+    public int getUserNew() {
+        return JDBIConnector.get().withHandle(h ->
+                h.createQuery(" SELECT MAX(id) from " + tableName  ).mapTo(Integer.class).first());
+    }
 }
