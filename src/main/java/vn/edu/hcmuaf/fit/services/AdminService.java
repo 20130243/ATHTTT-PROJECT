@@ -142,7 +142,6 @@ public class AdminService {
         return dao.checkPhone(phone);
     }
 
-    private static Logger LOGGER = null;
 
     public void logLogin(int adminId, String location, String method) {
         LOGGER = LoggerFactory.getLogger("AdminLogin");
