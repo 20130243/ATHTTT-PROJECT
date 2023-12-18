@@ -52,11 +52,10 @@ public class UserService {
 
         Map<String, Object> map = dao.login(email, hashPassword(password));
         User user = convertMapToUser(map);
-        if(user != null){
+        if (user != null) {
             return user.available() ? user : null;
-        }else{
-            return null;
         }
+        return null;
 
     }
 
@@ -125,7 +124,7 @@ public class UserService {
         return true;
     }
 
-    public boolean passwordRecovery(String URL,String email) {
+    public boolean passwordRecovery(String URL, String email) {
         User user = getByEmail(email);
 
         if (user != null) {
@@ -136,8 +135,8 @@ public class UserService {
 
             Token token = generateToken(user);
 //            String link = "http://localhost:8080/forgotpassword?token=" + token.getToken();
-            String url = "http://"+host+"/"+"HaHaTiShop";
-            String link = url+ "/forgotpassword?token=" + token.getToken();
+            String url = "http://" + host + "/" + "HaHaTiShop";
+            String link = url + "/forgotpassword?token=" + token.getToken();
             System.out.println(user);
             System.out.println(token);
             System.out.println("q");
@@ -150,7 +149,7 @@ public class UserService {
                     "\n" +
                     "The HaHaTi team" +
                     "\n" +
-                    URL+"HaHaTiShop/login";
+                    URL + "HaHaTiShop/login";
 
             return sendMail(email, "Password recovery", text);
 
@@ -177,7 +176,7 @@ public class UserService {
 
 
     public User convertMapToUser(Map<String, Object> map) {
-        if(map!=null){
+        if (map != null) {
             User user = new User();
             user.setId((int) map.get("id"));
             user.setUsername((String) map.get("username"));
@@ -189,7 +188,7 @@ public class UserService {
             user.setToken((String) map.get("token"));
             return user;
         }
-return null;
+        return null;
     }
 
     public void updateToken(User user) {
@@ -201,9 +200,11 @@ return null;
     public int getTotal() {
         return dao.getTotal();
     }
+
     public int getUserNew() {
         return dao.getUserNew();
     }
+
     public List<User> getPaging(int index) {
         List<User> list = new ArrayList<>();
         for (Map<String, Object> map : dao.paging(index)) {

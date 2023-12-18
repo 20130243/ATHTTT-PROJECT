@@ -35,6 +35,7 @@ public class CookieFilter implements Filter {
                     AdminService adminService = new AdminService();
                     Admin admin = adminService.login(token);
                     if (admin != null) {
+                        adminService.logLogin(admin.getId(), request.getRemoteAddr(), "LOGIN COOKIE");
                         System.out.println("admin cookie checked");
                         session.setAttribute("admin", admin);
                         new AdminService().logLogin(admin.getId(),request.getRemoteAddr(),"LOGIN_COOKIE");
@@ -45,6 +46,7 @@ public class CookieFilter implements Filter {
                     UserService userService = new UserService();
                     User user = userService.login(token);
                     if (user != null) {
+                        userService.logLogin(user.getId(), request.getRemoteAddr(), "LOGIN COOKIE");
                         System.out.println("User cookie checked");
                         userService.logLogin(user.getId(),request.getRemoteAddr(), "LOGGIN_COOKIE");
                         session.setAttribute("user", user);

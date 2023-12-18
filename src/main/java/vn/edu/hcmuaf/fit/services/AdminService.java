@@ -133,10 +133,6 @@ public class AdminService {
         return list;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new AdminService().checkUsername(new Admin(0, "admin", "ha", null, null, 0, "")));
-        new AdminService().insert(new Admin(0, "admin", "ha", null, null, 0, ""), "123");
-    }
 
     public boolean checkEmail(String email) {
         return dao.checkEmail(email);
@@ -148,7 +144,7 @@ public class AdminService {
 
 
     public void logLogin(int adminId, String location, String method) {
-        LOGGER = LoggerFactory.getLogger("User");
+        LOGGER = LoggerFactory.getLogger("AdminLogin");
         if (LOGGER.isDebugEnabled()) {
             MDC.put("admin", new Gson().toJson(getById(adminId)));
             MDC.put("location", location);
@@ -158,9 +154,11 @@ public class AdminService {
 
             MDC.remove("admin");
             MDC.remove("location");
-            MDC.remove("status");
+            MDC.remove("method");
         }
     }
+
+
 
     public void logAccount(int adminId, String location, int approver, int status) {
         LOGGER = LoggerFactory.getLogger("User");

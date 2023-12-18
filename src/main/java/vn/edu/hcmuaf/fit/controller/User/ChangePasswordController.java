@@ -31,7 +31,8 @@ public class ChangePasswordController extends HttpServlet {
                     && checkComfirmPassword) {
                 userService.updatePassword(user, newPassword);
                 userService.update(user);
-                userService.logChangePassword(user.getId(),"User", user.getId(), request.getRemoteAddr());
+                userService.logChangePassword(user.getId(), "User", user.getId(), request.getRemoteAddr());
+                userService.logLogin(user.getId(), request.getRemoteAddr(), "RESET PASSWORD");
                 session.setAttribute("user", user);
             } else {
                 response.getWriter().write("1");

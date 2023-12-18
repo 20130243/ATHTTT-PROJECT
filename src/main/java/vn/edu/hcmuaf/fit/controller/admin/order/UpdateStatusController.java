@@ -30,6 +30,7 @@ public class UpdateStatusController extends HttpServlet {
         Admin admin = (Admin) session.getAttribute("admin");
 
 
+        System.out.println(status);
         if (status == 1) {
             orderService.updateStatus(id, status);
             orderService.logOrder(id, "admin", admin.getId(), status);
