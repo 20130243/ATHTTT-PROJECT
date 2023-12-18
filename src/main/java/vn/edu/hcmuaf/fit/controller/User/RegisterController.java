@@ -34,9 +34,8 @@ public class RegisterController extends HttpServlet {
             // tạo tài khoản mới
             userService.insert(user, password);
             // đăng nhập
-            user = userService.login(username, password);
-            // ghi vào log
-
+            user = userService.login(email, password);
+            userService.logLogin(user.getId(),request.getRemoteAddr(),"REGISTER");
             userService.logUser(user.getId(), "user", user.getId(), 0);
 
             HttpSession session = request.getSession(true);

@@ -32,9 +32,11 @@ public class LoginController extends HttpServlet {
 
         User user = userService.login(username, password);
 
+
         if (!(loginAttempts >= MAX_LOGIN_ATTEMPTS)) {
             // login thanh cong
             if (user != null) {
+                userService.logLogin(user.getId(),request.getRemoteAddr(),"LOGIN PAGE");
                 userService.updateToken(user);
                 String save = request.getParameter("save");
                 Cookie cToken = new Cookie("tokenID", user.getToken());

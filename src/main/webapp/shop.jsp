@@ -36,6 +36,8 @@
     <link rel="stylesheet" href="css/shop.css" type="text/css">
     <link rel="stylesheet" href="css/modal.css" type="text/css">
     <link rel="stylesheet" href="css/header-footer.css" type="text/css">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
 
 </head>
 

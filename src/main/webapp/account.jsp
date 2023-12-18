@@ -19,6 +19,7 @@
     <!-- Css Styles -->
     <%@include file="css.jsp" %>
     <link rel="stylesheet" href="css/account.css" type="text/css"/>
+    <link rel="stylesheet" href="css/lostSign.css">
 </head>
 
 <body>
@@ -134,6 +135,23 @@
                                                     </p>
                                                     <p>(+84) <%=user.getPhone()%>
                                                     </p>
+                                                    <div id="lost-sign" class="button-lost-sign">
+                                                        <div>
+                                                            Mất file chữ ký
+                                                        </div>
+
+                                                    </div>
+                                                    <div id="myModal" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="close">&times;</span>
+                                                            <label for="username">Tên đăng nhập:</label>
+                                                            <input type="text" id="username" name="username" required>
+                                                            <label for="password">Mật khẩu:</label>
+                                                            <input type="password" id="password" name="password"
+                                                                   required>
+                                                            <button id="confirmBtn" class=" submit-button-lost-sign">Xác nhận</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="d111 col-md-8"
                                                      style="border-left: rgb(255, 255, 255) 10px solid">
@@ -381,7 +399,7 @@
 
 <script src="assets/js/vendor/account/js/plugins/slick.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/jquery.nice-select.min.js"></script>
-
+<script src="js/lostSignModal.js"/>
 <script src="assets/js/vendor/account/js/plugins/image-zoom.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/fancybox.js"></script>
 <script src="assets/js/vendor/account/js/plugins/scrollup.min.js"></script>

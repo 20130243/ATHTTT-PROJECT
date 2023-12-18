@@ -22,8 +22,8 @@ String url = request.getRequestURI();
                         <li class="<%=url.equals("/about.jsp") || url.equals("/contact.jsp")?"active" : ""%>">
                             <a href="#">Giới thiệu</a>
                             <ul class="dropdown">
-                                <li class="<%=url.equals("/about.jsp")?"active" : ""%>"><a href="./about.jsp" >Về chúng tôi</a></li>
-                                <li class="<%=url.equals("/contact.jsp")?"active" : ""%>"><a href="./contact.jsp">Liên hệ</a></li>
+                                <li class="<%=url.equals("/about.jsp")?"active" : ""%>"><a href="./about" >Về chúng tôi</a></li>
+                                <li class="<%=url.equals("/contact.jsp")?"active" : ""%>"><a href="./contact">Liên hệ</a></li>
                             </ul>
                         </li>
                         <li class="<%=(url.equals("/blog.jsp") || url.equals("/blog-details.jsp"))?"active" : ""%>"><a href="./blog">Tin tức</a></li>
