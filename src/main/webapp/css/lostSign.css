@@ -53,6 +53,15 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.modal-login {
+    display: none;
+    position: fixed;
+    top: auto;
+    left: auto;
+    width: 25%;
+    height: 50%;
+}
+
 /* Style the modal content */
 .modal-content {
     background-color: #fff;
