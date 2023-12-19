@@ -143,13 +143,15 @@
                                                     </div>
                                                     <div id="myModal" class="modal">
                                                         <div class="modal-content">
-                                                            <span class="close">&times;</span>
-                                                            <label for="username">Tên đăng nhập:</label>
-                                                            <input type="text" id="username" name="username" required>
-                                                            <label for="password">Mật khẩu:</label>
-                                                            <input type="password" id="password" name="password"
-                                                                   required>
-                                                            <button id="confirmBtn" class=" submit-button-lost-sign">Xác nhận</button>
+                                                            <span class="close" id="closeModal">&times;</span>
+                                                            <form action="${pageContext.request.contextPath}/lostSign" method="post"
+                                                                  id="lost-sign__form">
+                                                                <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
+                                                                <label for="emailCheck">Email:</label>
+                                                                <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
+                                                                <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
+                                                                <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -405,5 +407,28 @@
 <script src="assets/js/vendor/account/js/plugins/scrollup.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/jqueryui.min.js"></script>
 <script src="assets/js/vendor/account/js/main.js"></script>
+<script type="text/javascript">
+    $("#lost-sign__form").submit(function (e) {
+        e.preventDefault();
+        console.log($(this).serialize());
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                if(data == 1) {
+                    $('#lostsign-email-error').text("Địa chỉ email không đúng!");
+                }
+                else if (2 == data) {
+                    $('#myModal').hide();
+                }
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    });
+</script>
 
 </html>

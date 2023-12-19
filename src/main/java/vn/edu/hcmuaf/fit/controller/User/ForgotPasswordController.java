@@ -23,23 +23,19 @@ public class ForgotPasswordController extends HttpServlet {
         UserService userService = new UserService();
         if ( !email.equals("") ) {
             try {
-                System.out.println(userService.checkEmail( email));
                 if (userService.checkEmail( email)) {
                     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                     java.util.Date date = cal.getTime();
                     Date current = new java.sql.Date(date.getTime());
                     int count = userService.getCountForgetPassword(email, current );
-                    System.out.println(count);
                     if(count == 0) {
                         count++;
-                        System.out.println("Lần đầu " +count);
                         userService.passwordRecovery(request.getRequestURL().toString(), email);
                         userService.insertCountForgetPassword(email, current);
                         response.getWriter().write("0");
                     } else {
                         if( count <= 5) {
                             count++;
-                            System.out.println("các lần tiếp theo " +count);
                             userService.passwordRecovery(request.getRequestURL().toString(), email);
                             userService.updateCountForgetPassword(email, current, count);
                             response.getWriter().write("0");
