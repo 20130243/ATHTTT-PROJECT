@@ -32,10 +32,8 @@ public class EditUserController extends HttpServlet {
         } else {
             if(user!=null) {
                 String name = request.getParameter("first-name");
-                String email = request.getParameter("email-name");
                 String phone = request.getParameter("user-number");
                 user.setName(name);
-                user.setEmail(email);
                 user.setPhone(phone);
                 userService.update(user);
             }
