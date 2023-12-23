@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.services;
 
+import vn.edu.hcmuaf.fit.bean.Key;
 import vn.edu.hcmuaf.fit.dao.KeyDAO;
 
 import javax.crypto.Cipher;
@@ -8,8 +9,11 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Map;
 
 public class KeyService {
 
@@ -85,10 +89,9 @@ public class KeyService {
             outputStream.write(block, 0, block.length);
         }
 
-        byte[] decryptedBytes = outputStream.toByteArray();
-
-        return new String(decryptedBytes, StandardCharsets.UTF_8);
+        return outputStream.toString(StandardCharsets.UTF_8);
     }
+
 
     public static String publicKeyToString(KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
@@ -111,8 +114,23 @@ public class KeyService {
 
     }
 
-    public static void main(String[] args) throws SQLException, NoSuchAlgorithmException {
-            System.out.println(new KeyService().createKey(3));
+    public Key getKeyByUserId(int id) {
+        Map<String, Object> keyDao = new KeyDAO().getByUserId(id);
+        Key key = null;
+        if(keyDao!=null) {
+            key = new Key();
+            key.setId((int) keyDao.get("id"));
+            key.setPublicKey(keyDao.get("public_key").toString());
+            key.setCreateAt((LocalDateTime) keyDao.get("create_at"));
+            key.setExpiredAt((LocalDateTime) keyDao.get("expired_at"));
+            key.setUser_id((int) keyDao.get("user_id"));
+            key.setStatus((int) keyDao.get("status"));
+        }
+
+        return key;
+    }
+    public static void main(String[] args) throws Exception {
+            System.out.println(new KeyService().decrypt("XQZYykbheF9PsCn1xZS+iBXSKEFAox39huFa8mbQGpUe+2lIDwT78UROnCRXwqqfoHxtrF5zSUSzlP4+hnKJqP6SMvCF3FaW1bessVeXQ40MkTbwidS7DFkJSJhuN8srfFIbrfc1jRicl7ZJIq4BNtjFmWfQstHXGxZ9xK+hj3mhJ05htYUNn4zVaQ875gzTVgv7xxw7v2CvP9yzEahIDbLogfXdfLOUH+0c/MTmIcQUipTGdcpQtQWL4WPJsgtUsruIOV9XYTSwBqkszKuL25T3ChfMb8OrRCiLe+6PdUSkOzafRtxt5Z4+Vyz1F0WhRqOW7XaHw5/tRL8kZuGNtA==", "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9003PfrPMQ3LcbWJb+UAaBTmBx+7Zazd7RPCu4BxeqF8llm1x3Gd+nT1nUMXelumS7exoBF/UV7+XQbIacuoChYzwh5rwPuZRfxkREtd+3lrkyKae7r3W8HzVA+WL0ru9ihjPJfYs0CjonTCzXjqZITyc2PJUiAzAM/AcfgC2ALdB8WpD7hR8pniJDqauBNmgMkvqE0vhyJ/wLyaiiKQJxPpg/pbhDvz/42hzeQnGVpFFF24F26sk2DDesv6sJtLfFG97CiWZQaL/w1ICtINnMZSSWSd9T7ps2ZayBAsOuOSPd1x7Qkg4LDosU6WWbTEkD4Dmy9nm8/IoN/4TF3y7AgMBAAECggEAHS6NyLdGtsEruD1MoK0JsLZa59uvmVcFOXsYsRmc4uRpdCLTAm0KsAlGNkrRkG2MzNysujTp8n/m4T7lPXGrDeYwC44dQI+64o5ycRB/dm6CdKdwDgDPyGpCFpE5yawE1peTRs0kMjFyCIiZwwlaYs4cPlSPtHUR2L5jTE4Gl/PyRS25vZNWYAYnz/1dEDMBiVyPm//Y7obfLVVIMOJ/QM6tS7wvNKpAU1vO+Oei5+YY3ABh6d8Mq7D1K/hqPdVDggaH6iEdmiSQx0EGzi4AKhhmzQQ6CeRGkVNhKt1ekBaYOUgBhWdrr/1wUgoy6bWWG0Ff8jGnAzsqrmStswcl+QKBgQDNVZJbccAJWSWaUaVNgaRwp87j/TGrF9IkZp5/HfRQTNqDe6860UCM8W1KTyYwVP+zdSngKp2dezZqWiob7ov4TVDolEColiXnAGNXFtjMFJdhRhxyW1VQizsg0ScW/eQsrwNkQ7tOlkIT3PQRNkOBhKSfW4uhtWRUHxGYY0DRdwKBgQDsqhQGoavYyx2sfIvNWzrWEasPsIW5Uy3Bbvmh//M6Uh8vtqVlvx6uUcsAkpXIWp+LJyCAj5L1Oa/7mY8OCDGzbngWf7NDC/JRqecOICfihClpGralYDkpyJEOojcYXTurWmMTzRawQ9iB8x+6FedfQbiAcKhKkUyW6CjPCrTf3QKBgQCOG7QgP5iFn8ILjIgYHSpeoXTpizlNzT2t3avCFEwbKyVsLDS5Q0smgIyACklG1/zkCamCsFvHOxgNAPv1uuH6ZiAh50DcrJXsyvL1uiUvEO038FsNtjJUfRfd/YLNQcgiOLnjMZE3sXxn3Nq58tFDmTaJ58S6lRyrr5jw23hnvwKBgHoHOEwzEGi4UpSdo3g/khbPBWURn+HvAai7j/v3/XIU5f+0LZRI94jqo8Gn05N7JsiZZCjl3uCS3irdAuY5U2cxjroLHmNzxX5WHM0rx2UEwFVxcLvU4aSpxiHFgqMNb7bq5CtRlGFOmlRnB/TrVmHHgVq4vA223cbx7hjTbHABAoGBAJnVjslIH1n4JEkzJPr9mAyBgmixcSLOL2O+YCSi4M9aRD9EB82tUYMJ1lwM+1G8gCdx2ObAdeHzZzCGbMPxNG6yC0ij/dILqp67K6z5SfHiQHKOynS7W/smHKJU7eFtiMviT90QCG45vhFHVpaS+xSJiHL1Wvf+bqDNY4CKxF2Y"));
 
     }
 }

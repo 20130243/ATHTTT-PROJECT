@@ -23,6 +23,8 @@ public class ChangePasswordController extends HttpServlet {
             String newPassword = request.getParameter("password-new");
             String comfirmPassword = request.getParameter("password-new-confirm");
 
+
+
             boolean checkOldPassword = userService.checkPassword(user.getEmail(), oldPassword);
             boolean checkComfirmPassword = newPassword.equals(comfirmPassword);
 

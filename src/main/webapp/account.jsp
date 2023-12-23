@@ -131,8 +131,6 @@
                                                     </h6>
                                                     <p><%=user.getName()%>
                                                     </p>
-                                                    <p><%=user.getEmail()%>
-                                                    </p>
                                                     <p>(+84) <%=user.getPhone()%>
                                                     </p>
                                                     <div id="lost-sign" class="button-lost-sign">
@@ -163,10 +161,42 @@
                                                     </h6>
                                                     <p><%=user.getName()%>
                                                     </p>
-                                                    <p><%=user.getEmail()%>
+                                                    <p><%=user.hideEmail(user.getEmail())%>
                                                     </p>
                                                     <p><%=user.getAddress()%>
                                                     </p>
+                                                    <div id="change-email" class="button-lost-sign">
+                                                        <div>
+                                                            Đổi địa chỉ Email
+                                                        </div>
+
+                                                    </div>
+                                                    <div id="myModal_2" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="close" id="closeModal_2">&times;</span>
+                                                            <form action="${pageContext.request.contextPath}/changeEmail" method="post"
+                                                                  enctype="multipart/form-data"
+                                                                  id="change-email__form">
+                                                                <span class="text-danger" id="lostsign-email-error_2" style=" display: flex;"></span>
+                                                                <label for="oldEmail">Email cũ:</label>
+                                                                <input type="email" id="oldEmail" name="oldEmail" style="width: 100%;" required>
+                                                                <label for="newEmail">Email mới:</label>
+                                                                <input type="email" id="newEmail" name="newEmail" style="width: 100%;" required>
+                                                                <label for="file_privatekey">File Private Key:</label>
+                                                                <input
+                                                                        id="file_privatekey"
+                                                                        type="file"
+                                                                        name="private-key"
+                                                                        title="Private key"
+                                                                        accept=".key"
+                                                                        onchange="validateFile()"
+                                                                        required
+                                                                />
+                                                                <span class="text-danger" id="file-error"></span>
+                                                                <button id="confirmBtn_2" value="upload" class="submit-button-lost-sign">Xác nhận</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="table-responsive d222">
@@ -238,9 +268,6 @@
                                                                 <label>Họ và tên</label>
                                                                 <input type="text" name="first-name"
                                                                        value="<%=user.getName()%>"/>
-                                                                <label>Email</label>
-                                                                <input type="text" name="email-name"
-                                                                       value="<%=user.getEmail()%>"/>
                                                                 <label>Số điện thoại</label>
                                                                 <input type="text" name="user-number"
                                                                        value="<%=user.getPhone()%>"/>
@@ -283,8 +310,68 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- đơn hàng -->
+                                        <div class="tab-pane fade" id="orders">
+                                            <h3>Đơn hàng</h3>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Đơn hàng số #</th>
+                                                        <th>Sản phẩm</th>
+                                                        <th>Ngày đặt hàng</th>
+                                                        <th>Trạng thái</th>
+                                                        <th>Tổng cộng</th>
+                                                        <th>Chi tiết</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <%
+                                                        if (orders != null && orders.size() > 0) {
+                                                            for (Order order : orders) {
+                                                    %>
+                                                    <tr>
+                                                        <td><%=order.getId()%>
+                                                        </td>
 
-                                        <div class="tab-pane" id="address">
+                                                        <td>
+                                                            <%
+                                                                List<Item> items = order.getListItems();
+                                                                if (items != null && items.size() > 0) {
+                                                                    for (Item item : items) {
+                                                            %>
+                                                            <img class="img111"
+                                                                 src="<%=item.getProduct().getMainImage().getUrl()%>"
+                                                                 alt=""/>
+                                                            <%
+                                                                    }
+                                                                }
+                                                            %>
+                                                        </td>
+                                                        <td><%=order.getTime()%>
+                                                        </td>
+                                                        <td><%=order.getStatus() == 0 ? "Chờ xác nhận" : order.getStatus() == 1 ? "Đang chuẩn bị" :
+                                                                order.getStatus() == 2 ? "Đang vận chuyển" :
+                                                                        order.getStatus() == 3 ? "Thành công" : "Đã huỷ"
+                                                        %>
+                                                        </td>
+                                                        </td>
+                                                        <td><%=format.format((int) order.getTotal())%>
+                                                        </td>
+                                                        <td>
+                                                            <a href="orderDetail?orderid=<%=order.getId()%>" class="view"
+                                                               target="_blank">Xem</a>
+                                                        </td>
+                                                    </tr>
+                                                    <%
+                                                            }
+                                                        }
+                                                    %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="address">
                                             <h3>Sổ địa chỉ</h3>
                                             <div class="login" id="edit_address" style="display: block">
                                                 <div class="login-form-container" id="edit_address__form"
@@ -429,6 +516,63 @@
             },
         });
     });
+
+    $("#change-email__form").submit(function (e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log(data)
+                if(data == 1) {
+                    alert("Thay đổi Email thành công!")
+                    window.location.href = "./account";
+                } if(data == 2) {
+                    alert("Email cũ không đúng!")
+                    // $('#lostsign-email-error_2').text(");
+                }
+            },
+            error: function (data) {
+                alert("Private key không đúng!")
+                console.log(data);
+            },
+        });
+    });
+
+
+    // Sử dụng cú pháp của jQuery để lấy và thay đổi thuộc tính style của các phần tử
+    $('#btn_edit_111').click(function () {
+        $('#edit_111').css('display', 'block');
+        $('#save_111').css('display', 'none');
+    });
+
+    $('#submit_111').click(function () {
+        $('#edit_111').css('display', 'none');
+        $('#save_111').css('display', 'block');
+    });
+    const validateFile = () => {
+        var fileInput = document.querySelector('input[name="private-key"]');
+        var errorSpan = document.getElementById('file-error');
+
+        // Kiểm tra nếu có file được chọn
+        if (fileInput.files.length > 0) {
+            var fileName = fileInput.files[0].name;
+
+            // Kiểm tra nếu tên file không kết thúc bằng ".key"
+            if (!fileName.endsWith('.key')) {
+                errorSpan.innerText = 'Vui lòng chọn file có đuôi ".key"';
+                fileInput.value = ''; // Xóa giá trị file nếu không hợp lệ
+                return;
+            }
+        }
+
+        // Nếu không có lỗi, xóa thông báo lỗi
+        errorSpan.innerText = '';
+    }
 </script>
 
 </html>
