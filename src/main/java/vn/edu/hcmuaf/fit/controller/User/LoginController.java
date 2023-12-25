@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.controller.User;
 
 import vn.edu.hcmuaf.fit.bean.User;
+import vn.edu.hcmuaf.fit.services.KeyService;
 import vn.edu.hcmuaf.fit.services.UserService;
 
 import javax.servlet.ServletException;
@@ -14,8 +15,8 @@ import java.util.TimerTask;
 public class LoginController extends HttpServlet {
 
     private int loginAttempts = 0;
-    private static final int MAX_LOGIN_ATTEMPTS = 15;
-    private static final int LOCK_TINE_IN_MINUTES = 3;
+    private static final int MAX_LOGIN_ATTEMPTS = 150;
+    private static final int LOCK_TINE_IN_MINUTES = 0;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -27,6 +28,7 @@ public class LoginController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(true);
         UserService userService = new UserService();
+        KeyService keyService = new KeyService();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -49,27 +51,21 @@ public class LoginController extends HttpServlet {
                     request.setAttribute("user", user);
                     request.getRequestDispatcher("BannedAccount.jsp").forward(request, response);
                 } else {
-                    session.setAttribute("user", user);
-                    session.setMaxInactiveInterval(24 * 60 * 60);
-                    response.getWriter().write("2");
+                    String checkPrivateKey = keyService.getPublicKeyByUserId(user.getId());
+                    if(checkPrivateKey != null) {
+                        // Đăng nhập
+                        session.setAttribute("user", user);
+                        session.setMaxInactiveInterval(24 * 60 * 60);
+                        response.getWriter().write("2");
+                    } else {
+                        // Báo Key hết hạn
+                        session.setAttribute("user", user);
+                        session.setMaxInactiveInterval(24 * 60 * 60);
+                        response.getWriter().write("3");
+                    }
+
                 }
                 userService.logLogin(user.getId(),request.getRemoteAddr(), "LOGGIN_WEB");
-            }
-            // Sai 5 lan
-            else {
-                loginAttempts++;
-                if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-                    response.getWriter().write(LOCK_TINE_IN_MINUTES + " ");
-                    TimerTask task = new TimerTask() {
-                        public void run() {
-                            loginAttempts = 0;
-                        }
-                    };
-                    Timer timer = new Timer();
-                    timer.schedule(task, LOCK_TINE_IN_MINUTES * 60 * 1000);
-                } else {  // user or pass sai
-                    response.getWriter().write("1");
-                }
             }
         }
     }

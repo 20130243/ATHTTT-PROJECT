@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="css/style.css" type="text/css"/>
     <link rel="stylesheet" href="css/account.css" type="text/css"/>
     <link rel="stylesheet" href="css/header-footer.css" type="text/css"/>
+    <link rel="stylesheet" href="css/lostSign.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <div id="fb-root"></div>
     <script async defer crossorigin="anonymous"
@@ -71,6 +72,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 col-md-12 m-auto">
+                    <div id="myModal" class="modal-login">
+                        <div class="modal-content">
+<%--                            <span class="close" id="closeModal">&times;</span>--%>
+                            <form action="${pageContext.request.contextPath}/lostSign" method="post"
+                                  id="lost-sign">
+                                <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
+                            <label for="emailCheck">Email:</label>
+                            <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
+                                <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
+                            <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
+                            </form>
+                        </div>
+                    </div>
                     <div class="login-register-wrapper">
                         <!-- login-register-tab-list start -->
                         <div class="login-register-tab-list nav">
@@ -247,9 +261,12 @@
 <script src="js/validate.js"></script>
 <script type="text/javascript">
 
+    $('#closeModal').click(function() {
+        $('#myModal').hide();
+    });
+
     $("#login").submit(function (e) {
         e.preventDefault();
-        var timer = 3;
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
@@ -259,25 +276,12 @@
                     $("#login-username-error").text("Tài khoản hoặc mật khẩu không đúng");
                 } else if (2 == data) {
                     window.location.href = "./";
-                } else {
-                    timer = parseInt(data);
-                    if(!isNaN(timer)) {
-                        $("#login-username-error").text("Bạn nhập sai nhiều lần. Vui lòng thử lại sau: "+ timer  + " phút." + "\n");
-                        $(".login-btn").attr("disabled", true);
-                        setTimeout(() => {
-                            $("#login-username-error").text("");
-                            $(".login-btn").attr("disabled", false);
-                        }, timer * 60 * 1000);
-                    }
-                    else if(isNaN(timer)){
-                        timer = 3;
-                        $("#login-username-error").text("Bạn đang bị khoá đăng nhập. \n Vui lòng thử lại sau: "+ timer  + " phút.");
-                        $(".login-btn").attr("disabled", true);
-                        setTimeout(() => {
-                            $("#login-username-error").text("");
-                            $(".login-btn").attr("disabled", false);
-                        }, timer * 60 * 1000);
-                    }
+
+                } else if (3 == data) {
+                    $('#myModal').show();
+                    console.log(" hay vào đây")
+
+
                 }
             },
             error: function (data) {
@@ -288,16 +292,33 @@
     });
     $("#register").submit(function (e) {
         e.preventDefault();
-        console.log($(this).serialize());
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function (data) {
+                var responseData = data.split(';');
                 if (1 == data) {
                     $("#register-username-error").text("Tên đăng nhập đã được sử dụng");
-                } else if (2 == data) {
-                    window.location.href = "./";
+                } else if (2 == responseData[0]) {
+                    var userName = responseData[1];
+                    var privateKey = responseData[2];
+                    if(privateKey) {
+                        var blob = new Blob([privateKey], {type: 'text/plan'})
+                        var blobUrl = URL.createObjectURL(blob)
+
+                        var link = document.createElement('a')
+                        link.href = blobUrl
+                        link.download = userName + '_private_key.key'
+                        document.body.appendChild(link)
+                        link.click();
+
+                        URL.revokeObjectURL(blobUrl)
+                        document.body.removeChild(link)
+                        window.location.href = "./";
+                    } else {
+                        console.error("Private key not found in session.");
+                    }
                 }
 
             },
@@ -307,6 +328,29 @@
             },
         });
     });
+
+    $("#lost-sign").submit(function (e) {
+        e.preventDefault();
+        console.log($(this).serialize());
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                if(data == 1) {
+                $('#lostsign-email-error').text("Địa chỉ email không đúng!");
+                }
+                else if (2 == data) {
+                        window.location.href = "./";
+                }
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    });
+
 
     const countdown =(time) => {
         setTimeout(() => {

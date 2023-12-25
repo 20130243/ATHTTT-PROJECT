@@ -8,9 +8,15 @@ import vn.edu.hcmuaf.fit.bean.Token;
 import vn.edu.hcmuaf.fit.bean.User;
 import vn.edu.hcmuaf.fit.dao.UserDAO;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,9 +54,9 @@ public class UserService {
     }
 
 
-    public User login(String email, String password) {
+    public User login(String username, String password) {
 
-        Map<String, Object> map = dao.login(email, hashPassword(password));
+        Map<String, Object> map = dao.login(username, hashPassword(password));
         User user = convertMapToUser(map);
         if (user != null) {
             return user.available() ? user : null;
@@ -124,6 +130,56 @@ public class UserService {
         return true;
     }
 
+    public static boolean sendMailFile(String to, String subject, String text, String filePath) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("thaha8788@gmail.com", "vcfkhctyluiorzpw");
+            }
+        });
+        MimeMessage msg = new MimeMessage(session);
+        try {
+            msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+            msg.setFrom(new InternetAddress("thaha8788@gmail.com"));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject);
+
+            // Nội dung email
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setContent(text, "text/HTML; charset=UTF-8");
+
+            // Tạo multipart để kết hợp nội dung và file đính kèm
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            File file = null;
+            // File đính kèm
+            if(filePath!=null) {
+                MimeBodyPart attachmentBodyPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(filePath);
+                attachmentBodyPart.setDataHandler(new DataHandler(source));
+                file = new File(filePath);
+                String namefile = file.getName();
+                attachmentBodyPart.setFileName(namefile); // Tên file đính kèm
+                multipart.addBodyPart(attachmentBodyPart);
+            }
+            msg.setContent(multipart);
+
+            // Gửi email
+            Transport.send(msg);
+            if(file!=null) file.deleteOnExit();
+            System.out.println("Gửi email thành công");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean passwordRecovery(String URL, String email) {
         User user = getByEmail(email);
 
@@ -137,9 +193,6 @@ public class UserService {
 //            String link = "http://localhost:8080/forgotpassword?token=" + token.getToken();
             String url = "http://" + host + "/" + "HaHaTiShop";
             String link = url + "/forgotpassword?token=" + token.getToken();
-            System.out.println(user);
-            System.out.println(token);
-            System.out.println("q");
 
             String text = "Xin chào " + user.getName() + ",\n" +
                     "\n" +
