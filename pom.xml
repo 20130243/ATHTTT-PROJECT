@@ -9,7 +9,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
-    <name>milkteashop Maven Webapp</name>
+    <name>milkteashop Maven Webapp`</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
@@ -63,9 +63,22 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.6</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.4.0</version>
+        </dependency>
 
     </dependencies>
     <build>
         <finalName>milkteashop</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.0</version> <!-- Chọn một phiên bản mới hơn -->
+            </plugin>
+        </plugins>
     </build>
 </project>
