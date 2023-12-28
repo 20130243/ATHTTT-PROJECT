@@ -21,10 +21,35 @@
     <link rel="stylesheet" href="css/account.css" type="text/css"/>
     <link rel="stylesheet" href="css/lostSign.css">
 </head>
+<style>
+    .loading:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border-radius: 50%;
+        border: 2px solid  #0b2e13;
+        border-top-color: #fff;
+        animation: spin .8s linear infinite;
+        opacity: 1;
+        pointer-events: none;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
 <body>
 
 <%
+    int keyCheck =(request.getAttribute("key") != null) ? (int)request.getAttribute("key") : 0;
     User user = (User) session.getAttribute("user");
     CurrencyFormat format = new CurrencyFormat();
     if (user != null) {
@@ -133,25 +158,82 @@
                                                     </p>
                                                     <p>(+84) <%=user.getPhone()%>
                                                     </p>
-                                                    <div id="lost-sign" class="button-lost-sign">
-                                                        <div>
-                                                            Mất file chữ ký
-                                                        </div>
+                                                  <div class="key-container">
+                                                      <div id="lost-sign" class="button-lost-sign">
+                                                          <div>
+                                                              Mất file chữ ký
+                                                          </div>
 
-                                                    </div>
-                                                    <div id="myModal" class="modal">
-                                                        <div class="modal-content">
-                                                            <span class="close" id="closeModal">&times;</span>
-                                                            <form action="${pageContext.request.contextPath}/lostSign" method="post"
-                                                                  id="lost-sign__form">
-                                                                <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
-                                                                <label for="emailCheck">Email:</label>
-                                                                <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
-                                                                <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
-                                                                <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
-                                                            </form>
-                                                        </div>
-                                                    </div>
+                                                      </div>
+                                                      <div id="myModal" class="modal">
+                                                          <div class="modal-content">
+                                                              <span class="close" id="closeModal">&times;</span>
+                                                              <form action="${pageContext.request.contextPath}/lostSign" method="post"
+                                                                    id="lost-sign__form">
+                                                                  <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
+                                                                  <label for="emailCheck">Email:</label>
+                                                                  <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
+                                                                  <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
+                                                                  <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
+                                                              </form>
+                                                          </div>
+                                                      </div>
+                                                      <div id="import-key__div" class="button-lost-sign">
+                                                          <div>
+                                                              Import Key
+                                                          </div>
+
+                                                      </div>
+                                                      <div id="myModal3" class="modal">
+                                                          <div class="modal-content">
+                                                              <span class="close" id="closeModal3">&times;</span>
+                                                              <form action="${pageContext.request.contextPath}/importkey" method="post"
+                                                                    enctype="multipart/form-data"
+                                                                    id="import_key"
+                                                                    onsubmit=" return validateForm()">
+                                                                  <span class="text-danger" id="import_key__error" style=" display: flex;"></span>
+
+                                                                  <!-- Thêm phần chọn loại nhập key -->
+                                                                  <label for="import-type">Chọn cách nhập key:</label>
+                                                                  <select id="import-type" onchange="toggleImportMethod()">
+                                                                      <option value="text">Nhập key bằng text</option>
+                                                                      <option value="file">Nhập key bằng file</option>
+                                                                  </select>
+
+                                                                  <!-- Phần nhập key bằng text -->
+                                                                  <div id="text-import" style="display: block;">
+                                                                      <label for="text_publickey">Nhập Public Key:</label>
+                                                                      <textarea
+                                                                              id="text_publickey"
+                                                                              name="public-key-text"
+                                                                              title="Private key"
+                                                                              rows="4"
+                                                                              cols="38"
+                                                                              placeholder="Dán key vào đây"
+                                                                      ></textarea>
+                                                                  </div>
+
+                                                                  <!-- Phần nhập key bằng file -->
+                                                                  <div id="file-import" style="display: none;">
+                                                                      <label for="file_publickey">Chọn File Public Key:</label>
+                                                                      <input
+                                                                              id="file_publickey"
+                                                                              type="file"
+                                                                              name="public-key-file"
+                                                                              title="Public key"
+                                                                              accept=".key"
+                                                                              onchange="validateFile()"
+                                                                      />
+                                                                  </div>
+
+                                                                  <!-- Trường ẩn để lưu loại nhập liệu -->
+                                                                  <input type="hidden" id="import-type-hidden" name="import-type" value="text">
+
+                                                                  <button id="confirmBtn3" class="submit-button-lost-sign">Xác nhận</button>
+                                                              </form>
+                                                          </div>
+                                                      </div>
+                                                  </div>
                                                 </div>
                                                 <div class="d111 col-md-8"
                                                      style="border-left: rgb(255, 255, 255) 10px solid">
@@ -475,7 +557,7 @@
 
 <!-- Js Plugins -->
 <script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/jquery.nice-select.min.js"></script>
+<%--<script src="js/jquery.nice-select.min.js"></script>--%>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/jquery.magnific-popup.min.js"></script>
 <script src="js/jquery.countdown.min.js"></script>
@@ -485,7 +567,6 @@
 <script src="js/main.js"></script>
 <script src="js/account/bootstrap.min.js"></script>
 <script src="assets/js/vendor/jquery-3.5.1.min.js"></script>
-
 <script src="assets/js/vendor/account/js/plugins/slick.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/jquery.nice-select.min.js"></script>
 <script src="js/lostSignModal.js"/>
@@ -497,7 +578,8 @@
 <script type="text/javascript">
     $("#lost-sign__form").submit(function (e) {
         e.preventDefault();
-        console.log($(this).serialize());
+        $('#confirmBtn').addClass('loading');
+        $('#confirmBtn').prop("disabled", true);
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
@@ -505,20 +587,69 @@
             success: function (data) {
                 if(data == 1) {
                     $('#lostsign-email-error').text("Địa chỉ email không đúng!");
+                    $('#confirmBtn').removeClass('loading');
+                    $('#confirmBtn').prop("disabled", false);
                 }
                 else if (2 == data) {
-                    $('#myModal').hide();
+                    $('#confirmBtn').removeClass('loading');
+                    $('#confirmBtn').prop("disabled", false);
+                    window.location.href = "./account";
                 }
             },
             error: function (data) {
-                console.log('An error occurred.');
+                $('#confirmBtn').removeClass('loading');
+                $('#confirmBtn').prop("disabled", false);
+                console.log('An error occurred: ' + data);
+            },
+        });
+    });
+
+    $("#import_key").submit(function (e) {
+        e.preventDefault();
+        $('#confirmBtn3').addClass('loading');
+        $('#confirmBtn3').prop("disabled", true);
+        var formData = new FormData(this);
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if(1 == data) {
+                    console.log(data)
+                    $("#myModal3").hide();
+                    $('#confirmBtn3').removeClass('loading');
+                    $('#confirmBtn3').prop("disabled", false);
+                }
+                if(-1 == data) {
+                    $("#import_key__error").text("Public Key không hợp lệ!")
+                    $('#confirmBtn3').removeClass('loading');
+                    $('#confirmBtn3').prop("disabled", false);
+                }
+                if(2 == data) {
+                    $("#import_key__error").text("Không thể import Public Key!")
+                    $('#confirmBtn3').removeClass('loading');
+                    $('#confirmBtn3').prop("disabled", false);
+                }
+                if(3 == data) {
+                    $("#import_key__error").text("Đã xảy ra lỗi!")
+                    $('#confirmBtn3').removeClass('loading');
+                    $('#confirmBtn3').prop("disabled", false);
+                }
+            },
+            error: function (data) {
                 console.log(data);
+                $('#confirmBtn3').removeClass('loading');
+                $('#confirmBtn3').prop("disabled", false);
             },
         });
     });
 
     $("#change-email__form").submit(function (e) {
         e.preventDefault();
+        $('#confirmBtn_2').addClass('loading');
+        $('#confirmBtn_2').prop("disabled", true);
         var formData = new FormData(this);
         $.ajax({
             type: $(this).attr('method'),
@@ -533,11 +664,14 @@
                     window.location.href = "./account";
                 } if(data == 2) {
                     alert("Email cũ không đúng!")
-                    // $('#lostsign-email-error_2').text(");
+                    $('#confirmBtn_2').removeClass('loading');
+                    $('#confirmBtn_2').prop("disabled", false);
                 }
             },
             error: function (data) {
                 alert("Private key không đúng!")
+                $('#confirmBtn_2').removeClass('loading');
+                $('#confirmBtn_2').prop("disabled", false);
                 console.log(data);
             },
         });
@@ -572,6 +706,50 @@
 
         // Nếu không có lỗi, xóa thông báo lỗi
         errorSpan.innerText = '';
+    }
+    <%
+    if(keyCheck==-1) {
+    %>
+    $('#lostsign-email-error').text("Key của bạn đã hết hạn. Vui lòng xác nhận email để nhận key mới!");
+    $('#myModal').show();
+    <%
+        }
+    %>
+
+    function toggleImportMethod() {
+        var importType = document.getElementById("import-type").value;
+        var textImport = document.getElementById("text-import");
+        var fileImport = document.getElementById("file-import");
+        var importTypeHidden = document.getElementById("import-type-hidden");
+
+        if (importType === "text") {
+            textImport.style.display = "block";
+            fileImport.style.display = "none";
+            importTypeHidden.value = "text";
+        } else {
+            textImport.style.display = "none";
+            fileImport.style.display = "block";
+            importTypeHidden.value = "file";
+        }
+    }
+
+    function validateForm() {
+        var importType = document.getElementById("import-type-hidden").value;
+
+        if (importType === "text") {
+            // Kiểm tra và xử lý dữ liệu từ trường nhập key bằng text
+            var textPublicKey = document.getElementById("text_publickey").value;
+            // Thêm logic kiểm tra textPublicKey nếu cần thiết
+        } else {
+            // Kiểm tra và xử lý dữ liệu từ trường nhập key bằng file
+            var fileInput = document.getElementById("file_publickey");
+            if (fileInput.files.length === 0) {
+                alert("Vui lòng chọn một file private key.");
+                return false;
+            }
+        }
+
+        return true;
     }
 </script>
 

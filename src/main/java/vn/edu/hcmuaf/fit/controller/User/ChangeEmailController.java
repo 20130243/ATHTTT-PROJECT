@@ -8,8 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
@@ -26,30 +28,45 @@ public class ChangeEmailController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
 
+
         String oldEmail = req.getParameter("oldEmail");
         String newEmail = req.getParameter("newEmail");
         Part filePart = req.getPart("private-key");
-        InputStream inputStream = filePart.getInputStream();
-        byte[] privateKeyBytes = inputStream.readAllBytes();
-        String privateKey = new String(privateKeyBytes, StandardCharsets.UTF_8);
-        User user = (User) session.getAttribute("user");
 
+        try (InputStream inputStream = filePart.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
-        KeyService keyService = new KeyService();
-        UserService userService = new UserService();
-        try {
-            String currentEmailEncrypt = keyService.encrypt(user.getEmail(), keyService.getKeyByUserId(user.getId()).getPublicKey());
-            String currentEmailDecrypt = keyService.decrypt(currentEmailEncrypt, privateKey);
-            if(oldEmail.equals(currentEmailDecrypt)) {
-                user.setEmail(newEmail);
-                userService.update(user);
-                resp.getWriter().write("1");
-            } else {
-                resp.getWriter().write("2");
+            StringBuilder privateKeyBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                privateKeyBuilder.append(line).append("\n");
             }
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            String privateKey = privateKeyBuilder.toString().trim()
+                    .replace("-----BEGIN PRIVATE KEY-----","")
+                    .replace("-----END PRIVATE KEY-----","");
+            System.out.println(privateKey);
+            User user = (User) session.getAttribute("user");
+
+            KeyService keyService = new KeyService();
+            UserService userService = new UserService();
+
+            try {
+                String currentEmailEncrypt = keyService.encrypt(user.getEmail(), keyService.getKeyByUserId(user.getId()).getPublicKey());
+                String currentEmailDecrypt = keyService.decrypt(currentEmailEncrypt, privateKey);
+
+                if (oldEmail.equals(currentEmailDecrypt)) {
+                    user.setEmail(newEmail);
+                    userService.update(user);
+                    resp.getWriter().write("1");
+                } else {
+                    resp.getWriter().write("2");
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
+
 }

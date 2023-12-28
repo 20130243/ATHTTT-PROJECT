@@ -1,16 +1,21 @@
+.key-container {
+    display: flex;
+    justify-content: space-between;
+}
+
 .button-lost-sign {
     margin-top: 10px;
     cursor: pointer;
     width: 128px;
     height: 40px;
-    border: 1px #FA6C74 solid;
+    border: 1px #1fa198 solid;
     display: grid;
     place-items: center;
 }
 
 .button-lost-sign > div {
     text-align: center;
-    color: #FA6C74;
+    color: #000000;
     font-size: 12px;
     font-family: Inter;
     font-weight: 400;
@@ -18,7 +23,7 @@
 }
 
 .button-lost-sign:hover {
-    background-color: #FA6C74;
+    background-color: #1fa198;
 }
 
 .button-lost-sign:hover > div {
