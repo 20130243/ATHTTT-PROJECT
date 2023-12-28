@@ -54,18 +54,17 @@ public class LoginController extends HttpServlet {
                     String checkPrivateKey = keyService.getPublicKeyByUserId(user.getId());
                     if(checkPrivateKey != null) {
                         // Đăng nhập
-                        session.setAttribute("user", user);
-                        session.setMaxInactiveInterval(24 * 60 * 60);
                         response.getWriter().write("2");
                     } else {
                         // Báo Key hết hạn
-                        session.setAttribute("user", user);
-                        session.setMaxInactiveInterval(24 * 60 * 60);
                         response.getWriter().write("3");
                     }
-
+                    session.setAttribute("user", user);
+                    session.setMaxInactiveInterval(24 * 60 * 60);
                 }
                 userService.logLogin(user.getId(),request.getRemoteAddr(), "LOGGIN_WEB");
+            } else {
+                response.getWriter().write("1");
             }
         }
     }

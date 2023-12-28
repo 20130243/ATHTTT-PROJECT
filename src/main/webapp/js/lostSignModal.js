@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // When the user clicks the button, open the modal
     lostSignButton.onclick = function () {
         modal.style.display = 'block';
+        console.log("co vao day khong nhi")
+        $('#lostsign-email-error').text("");
     };
 
     // When the user clicks on <span> (x), close the modal
@@ -68,9 +70,33 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Handle the "Xác nhận" button click event
-    // var confirmBtn = document.getElementById('confirmBtn_2');
-    // confirmBtn.onclick = function () {
-    //     modal.style.display = 'none';
-    // };
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Get the modal
+    var modal = document.getElementById('myModal3');
+
+    // Get the button that opens the modal
+    var lostSignButton = document.getElementById('import-key__div');
+
+    // Get the <span> element that closes the modal
+    var closeBtn = document.getElementById('closeModal3');
+
+    // When the user clicks the button, open the modal
+    lostSignButton.onclick = function () {
+        modal.style.display = 'block';
+    };
+
+    // When the user clicks on <span> (x), close the modal
+    closeBtn.onclick = function () {
+        modal.style.display = 'none';
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+
 });
