@@ -363,6 +363,6 @@ public class UserService {
 
     public static void main(String[] args) {
 
-//        new UserService().passwordRecovery("buithanhdam02@gmail.com");
+        System.out.println(new UserService().checkUsername(new User(0,"tdxny","ha","","","",1,"")));
     }
 }
