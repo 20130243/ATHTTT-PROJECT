@@ -27,6 +27,12 @@ public class AccountController extends HttpServlet {
                 throw new RuntimeException(e);
             }
         }
+
+        String keyCheck = request.getParameter("key") != null ?  request.getParameter("key") : "" ;
+        if(keyCheck.equals("expired")) {
+            request.setAttribute("key", -1);
+        }
+
         request.getRequestDispatcher("account.jsp").forward(request,response);
     }
 

@@ -72,19 +72,6 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 col-md-12 m-auto">
-                    <div id="myModal" class="modal-login">
-                        <div class="modal-content">
-<%--                            <span class="close" id="closeModal">&times;</span>--%>
-                            <form action="${pageContext.request.contextPath}/lostSign" method="post"
-                                  id="lost-sign">
-                                <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
-                            <label for="emailCheck">Email:</label>
-                            <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
-                                <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
-                            <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
-                            </form>
-                        </div>
-                    </div>
                     <div class="login-register-wrapper">
                         <!-- login-register-tab-list start -->
                         <div class="login-register-tab-list nav">
@@ -260,11 +247,6 @@
 
 <script src="js/validate.js"></script>
 <script type="text/javascript">
-
-    $('#closeModal').click(function() {
-        $('#myModal').hide();
-    });
-
     $("#login").submit(function (e) {
         e.preventDefault();
         $.ajax({
@@ -278,10 +260,7 @@
                     window.location.href = "./";
 
                 } else if (3 == data) {
-                    $('#myModal').show();
-                    console.log(" hay vào đây")
-
-
+                    window.location.href = "./account?key=expired";
                 }
             },
             error: function (data) {
