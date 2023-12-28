@@ -38,6 +38,9 @@ public class OrderController extends HttpServlet {
             String addressDistrict = request.getParameter("addressDistrict");
             String addressWard = request.getParameter("addressWard");
             String noteUser = request.getParameter("noteUser");
+            String key = request.getParameter()
+            String message = nameUser + phoneUser + addressUser + addressCity + addressDistrict + addressWard + noteUser;
+
             int priceLogistic = Integer.parseInt(request.getParameter("priceLogistic"));
 
             String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
