@@ -188,7 +188,7 @@
       </div>
 
       <div class="col-lg-4">
-        <form id="order_form" action="order" method="post" enctype="multipart/form-data" onsubmit=" return checkForm()">>
+        <form id="order_form" accept-charset="UTF-8" action="order" method="post" enctype="multipart/form-data" onsubmit=" return checkForm()">>
           <div class="cart__discount checkout__form shadow p-4">
             <div class="row">
               <div class="col-lg-12 col-md-12">
@@ -558,15 +558,38 @@
   $("#order_form").submit(function (e) {
     e.preventDefault();
     var formData = new FormData(this);
-    console.log(formData);
+    // var form = this;
+    // var nameUser = $(form).find('input[name="nameUser"]').val();
+    // var phoneUser = $(form).find('input[name="phoneUser"]').val();
+    // var addressUser = $(form).find('textarea[name="addressUser"]').val();
+    // var addressCity = $(form).find('select[name="addressCity"]').val();
+    // var addressDistrict = $(form).find('select[name="addressDistrict"]').val();
+    // var addressWard = $(form).find('select[name="addressWard"]').val();
+    // var noteUser = $(form).find('textarea[name="noteUser"]').val();
+    // var coupon = $(form).find('input[name="coupon"]').val();
+    // var priceLogistic = $(form).find('input[name="priceLogistic"]').val();
+    // var fileInput = $(form).find('input[id="fileInput"]')[0].files[0];
+    // var data = {
+    //   nameUser: nameUser,
+    //   phoneUser: phoneUser,
+    //   addressUser: addressUser,
+    //   addressCity: addressCity,
+    //   addressDistrict: addressDistrict,
+    //   addressWard: addressWard,
+    //   noteUser: noteUser,
+    //   coupon: coupon,
+    //   priceLogistic: priceLogistic,
+    //   fileInput: fileInput
+    // };
+
     $.ajax({
       type: $(this).attr('method'),
       url: $(this).attr('action'),
+      // data: data,
       data: formData,
       contentType: false,
       processData: false,
       success: function (data) {
-        console.log(formData);
 
         if(0 == data) {
           window.location.href = "./account";
@@ -585,7 +608,6 @@
       error: function (data) {
         console.log(data);
         console.log('An error occurred.');
-        console.log(formData);
       },
     });
   });

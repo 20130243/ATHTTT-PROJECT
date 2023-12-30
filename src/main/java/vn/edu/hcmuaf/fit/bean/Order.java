@@ -18,7 +18,9 @@ public class Order implements Serializable {
     int status;
     String hash_message;
 
-    public Order(int id, int user_id, String name, String phone, String address, Timestamp time, String note, Coupon coupon, List<Item> listItems, float total, int status, String hash_message) {
+    int key_id;
+
+    public Order(int id, int user_id, String name, String phone, String address, Timestamp time, String note, Coupon coupon, List<Item> listItems, float total, int status, String hash_message, int key_id) {
         this.id = id;
         this.user_id = user_id;
         this.name = name;
@@ -31,6 +33,7 @@ public class Order implements Serializable {
         this.total = total;
         this.status = status;
         this.hash_message = hash_message;
+        this.key_id = key_id;
     }
 
     public Order() {
@@ -116,6 +119,14 @@ public class Order implements Serializable {
         this.hash_message = hash_message;
     }
 
+    public int getKey_id() {
+        return key_id;
+    }
+
+    public void setKey_id(int key_id) {
+        this.key_id = key_id;
+    }
+
     //    public void setTotal() {
 //        if(this.cart != null) {
 //            this.total = this.cart.getTotalMoney();
@@ -173,6 +184,7 @@ public class Order implements Serializable {
                 ", total=" + total +
                 ", status=" + status +
                 ", hash_message='" + hash_message + '\'' +
+                ", key_id=" + key_id +
                 '}';
     }
 }
