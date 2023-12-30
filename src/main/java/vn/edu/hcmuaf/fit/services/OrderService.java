@@ -52,7 +52,7 @@ public class OrderService {
 
     public void insert(Order order) {
         dao.insert(order.getUser_id(), order.getName(), order.getPhone(),
-                order.getAddress(), order.getNote(), order.getCoupon() == null ? 0 : order.getCoupon().getId(), order.getTotal());
+                order.getAddress(), order.getNote(), order.getCoupon() == null ? 0 : order.getCoupon().getId(), order.getTotal(), order.getHash_message());
     }
 
     // update logistic query
@@ -126,7 +126,9 @@ public class OrderService {
         order.setNote((String) map.get("note"));
 
         order.setTotal((float) map.get("total"));
-        order.setStatus(Integer.parseInt((String) map.get("status")));
+        order.setStatus((Integer) map.get("status"));
+//        order.setStatus(Integer.parseInt((String) map.get("status")));
+        order.setHash_message((String) map.get("hash_message"));
         return order;
     }
 

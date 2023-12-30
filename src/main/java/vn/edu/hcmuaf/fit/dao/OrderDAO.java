@@ -38,9 +38,9 @@ public class OrderDAO extends RD {
         );
     }
 
-    public static void insert(int user_id, String name, String phone, String address, String note, int coupon_id, float total) {
+    public static void insert(int user_id, String name, String phone, String address, String note, int coupon_id, float total, String hash_message) {
         JDBIConnector.get().withHandle(h ->
-                h.createUpdate("INSERT INTO " + tableName + "(user_id,name,phone,address,note,coupon_id,total) VALUES(:user_id,:name,:phone,:address,:note,:coupon_id,:total)")
+                h.createUpdate("INSERT INTO " + tableName + "(user_id,name,phone,address,note,coupon_id,total,hash_message) VALUES(:user_id,:name,:phone,:address,:note,:coupon_id,:total,:hash_message)")
                         .bind("user_id", user_id)
                         .bind("name", name)
                         .bind("phone", phone)
@@ -48,6 +48,7 @@ public class OrderDAO extends RD {
                         .bind("note", note)
                         .bind("coupon_id", coupon_id == 0 ? null : coupon_id)
                         .bind("total", total)
+                        .bind("hash_message", hash_message)
                         .execute()
         );
     }
