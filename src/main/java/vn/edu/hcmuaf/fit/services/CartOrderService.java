@@ -40,7 +40,7 @@ public class CartOrderService {
         order.setAddress((String) map.get("address"));
         order.setNote((String) map.get("note"));
         order.setTotal((float) map.get("total"));
-        order.setStatus(Integer.parseInt((String) map.get("status")));
+        order.setStatus((int) map.get("status"));
 
         List<Item> items = getCartByOrder(order.getId());
         User user = new UserService().getById(order.getUser_id());

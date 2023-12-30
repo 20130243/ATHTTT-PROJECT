@@ -218,6 +218,10 @@
                   <p>Mã giảm giá</p>
                   <input name="coupon" onchange="useCoupon()" type="text" placeholder="Nhập mã giảm giá " value="<%=cart != null && cart.getCoupon()!=null? cart.getCoupon().getCode():""%>">
                 </div>
+                <div class="coupon_form">
+                  <p>Khóa người dùng</p>
+                  <input name="key" type="password" placeholder="Nhập khóa người dùng ">
+                </div>
                 <div class="row">
                   <div class="col-lg-12">
                     <h6 class="mt-4  mb-3">Tổng giỏ hàng</h6>

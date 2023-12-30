@@ -32,6 +32,7 @@ public class LostSignController extends HttpServlet {
             String privateKey = null;
             try {
                 privateKey = keyService.createKey(user.getId());
+                privateKey = keyService.formatPrivateKey(privateKey);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             } catch (SQLException e) {
