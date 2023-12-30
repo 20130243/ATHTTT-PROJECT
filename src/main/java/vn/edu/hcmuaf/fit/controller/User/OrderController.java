@@ -55,8 +55,6 @@ public class OrderController extends HttpServlet {
                 throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
             }
 
-
-
             int priceLogistic = Integer.parseInt(request.getParameter("priceLogistic"));
 
             String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
