@@ -52,7 +52,7 @@ public class OrderService {
 
     public void insert(Order order) {
         dao.insert(order.getUser_id(), order.getName(), order.getPhone(),
-                order.getAddress(), order.getNote(), order.getCoupon() == null ? 0 : order.getCoupon().getId(), order.getTotal(), order.getHash_message());
+                order.getAddress(), order.getNote(), order.getCoupon() == null ? 0 : order.getCoupon().getId(), order.getTotal(), order.getHash_message(), order.getKey_id());
     }
 
     // update logistic query

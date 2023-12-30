@@ -23,6 +23,7 @@ public class OrderController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute("cart");
         User user = (User) session.getAttribute("user");
@@ -39,7 +40,7 @@ public class OrderController extends HttpServlet {
             String addressDistrict = request.getParameter("addressDistrict");
             String addressWard = request.getParameter("addressWard");
             String noteUser = request.getParameter("noteUser");
-
+            int key_id = key.getId();
 
             String message = nameUser + phoneUser + addressUser + addressCity + addressDistrict + addressWard + noteUser;
             Part filePart = request.getPart("fileInput");
@@ -83,6 +84,7 @@ public class OrderController extends HttpServlet {
                     order.setCoupon(cart.getCoupon());
                     order.setTotal(cart.getTotalMoney() + priceLogistic);
                     order.setHash_message(sign);
+                    order.setKey_id(key_id);
                     try {
                         cartOrderService.addOrder(order);
                         new OrderService().logOrder(cartOrderService.getOrderFirst().getId(), "user", user.getId(), 0);
