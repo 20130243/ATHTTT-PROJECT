@@ -152,7 +152,7 @@ public class KeyService {
         return key;
     }
 
-    public String sign(String message, PrivateKey privateKey) throws Exception {
+    public String sign(String message, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 
         Signature signature = Signature.getInstance("SHA256withRSA");
         signature.initSign(privateKey);
