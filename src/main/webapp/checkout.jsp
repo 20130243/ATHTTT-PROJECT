@@ -20,6 +20,44 @@
   <!-- Css Styles -->
   <%@include file="css.jsp"%>
   <link rel="stylesheet" href="css/cart.css" type="text/css">
+  <style>
+    .custom-input {
+      display: none;
+    }
+    .custom-label {
+      height:  50px;
+      width: 100%;
+      border: 1px dashed #999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: relative;
+    }
+    .custom-label:hover {
+      color: #1fa198;
+      border: 1px dashed #1fa198;
+    }
+    .fileName {
+      margin-top: 10px;
+    }
+    .removeFile {
+      position: absolute;
+      top: 1px;
+      right: 5px;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+    .removeFile:hover {
+      color: #1fa198;
+    }
+    .custom-label:hover .removeFile {
+      display: block;
+    }
+
+  </style>
 </head>
 
 <body>
@@ -150,7 +188,7 @@
       </div>
 
       <div class="col-lg-4">
-        <form id="order_form" action="order" method="post" >
+        <form id="order_form" accept-charset="UTF-8" action="order" method="post" enctype="multipart/form-data" onsubmit=" return checkForm()">>
           <div class="cart__discount checkout__form shadow p-4">
             <div class="row">
               <div class="col-lg-12 col-md-12">
@@ -217,6 +255,11 @@
                 <div class="coupon_form">
                   <p>Mã giảm giá</p>
                   <input name="coupon" onchange="useCoupon()" type="text" placeholder="Nhập mã giảm giá " value="<%=cart != null && cart.getCoupon()!=null? cart.getCoupon().getCode():""%>">
+                </div>
+                <div class="checkout__input">
+                  <p>Khóa người dùng</p>
+                  <input name="fileInput" type="file" id="fileInput" class="custom-input" accept=".key">
+                  <label for="fileInput" class="custom-label" id="fileLabel" >Thêm file tại đây</label>
                 </div>
                 <div class="row">
                   <div class="col-lg-12">
@@ -514,11 +557,40 @@
 
   $("#order_form").submit(function (e) {
     e.preventDefault();
+    var formData = new FormData(this);
+    // var form = this;
+    // var nameUser = $(form).find('input[name="nameUser"]').val();
+    // var phoneUser = $(form).find('input[name="phoneUser"]').val();
+    // var addressUser = $(form).find('textarea[name="addressUser"]').val();
+    // var addressCity = $(form).find('select[name="addressCity"]').val();
+    // var addressDistrict = $(form).find('select[name="addressDistrict"]').val();
+    // var addressWard = $(form).find('select[name="addressWard"]').val();
+    // var noteUser = $(form).find('textarea[name="noteUser"]').val();
+    // var coupon = $(form).find('input[name="coupon"]').val();
+    // var priceLogistic = $(form).find('input[name="priceLogistic"]').val();
+    // var fileInput = $(form).find('input[id="fileInput"]')[0].files[0];
+    // var data = {
+    //   nameUser: nameUser,
+    //   phoneUser: phoneUser,
+    //   addressUser: addressUser,
+    //   addressCity: addressCity,
+    //   addressDistrict: addressDistrict,
+    //   addressWard: addressWard,
+    //   noteUser: noteUser,
+    //   coupon: coupon,
+    //   priceLogistic: priceLogistic,
+    //   fileInput: fileInput
+    // };
+
     $.ajax({
       type: $(this).attr('method'),
       url: $(this).attr('action'),
-      data: $(this).serialize(),
+      // data: data,
+      data: formData,
+      contentType: false,
+      processData: false,
       success: function (data) {
+
         if(0 == data) {
           window.location.href = "./account";
         }
@@ -529,8 +601,12 @@
         if(1 == data) {
           alert('Vui lòng điền đủ thông tin');
         }
+        if (3 == data) {
+          alert('Khóa của bạn không dúng. Hãy kiểm tra lại khóa!');
+        }
       },
       error: function (data) {
+        console.log(data);
         console.log('An error occurred.');
       },
     });
@@ -543,6 +619,7 @@
       url: $(this).attr('action'),
       data: $(this).serialize(),
       success: function (data) {
+        console.log(data);
         let dataArr = data.split("|");
         let remove = dataArr[0];
         if(remove=="remove") {
@@ -569,6 +646,66 @@
 
 
 
+
+</script>
+
+<script>
+  // const toggleButton = document.getElementById('toggleButton');
+  // const textInput = document.getElementById('textInput');
+  //
+  // toggleButton.addEventListener('click', function() {
+  //   textInput.disabled = !textInput.disabled;
+  // });
+  //
+  // const toggleButton1 = document.getElementById('toggleButton1');
+  // const fileInput = document.getElementById('fileInput');
+  //
+  // toggleButton1.addEventListener('click', function() {
+  //   fileInput.disabled = !fileInput.disabled;
+  // });
+
+
+  document.getElementById('fileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const filePath = event.target.value;
+      const fileName = file.name;
+
+      const fileLabel = document.getElementById('fileLabel');
+      fileLabel.textContent = '';
+
+      const fileNameElement = document.createElement('span');
+      fileNameElement.classList.add('fileName');
+      fileNameElement.textContent = fileName;
+
+      const removeButton = document.createElement('span');
+      removeButton.classList.add('removeFile');
+      removeButton.textContent = 'x';
+      removeButton.addEventListener('click', function() {
+        document.getElementById('fileInput').value = '';
+        fileLabel.textContent = 'Upload File';
+      });
+
+      fileLabel.appendChild(fileNameElement);
+      fileLabel.appendChild(removeButton);
+    }
+  });
+
+  function checkForm() {
+    var fileInput = document.getElementById("fileInput");
+
+    if (fileInput.files.length === 0) {
+      alert("Vui lòng chọn một file private key!");
+      return false;
+    } else {
+      var fileName = fileInput.files[0].name;
+      if (!fileName.endsWith('.key')) {
+        alert("Vui lòng chọn đúng file hợp lệ!");
+        return false;
+      }
+    }
+    return true;
+  }
 
 </script>
 

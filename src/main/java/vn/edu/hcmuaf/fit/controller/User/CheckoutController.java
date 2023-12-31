@@ -36,6 +36,8 @@ public class CheckoutController extends HttpServlet {
             }
             cart.updateTotal();
         }
+
+
         session.setAttribute("cart", cart);
         session.setAttribute("listProductUnavaiable", listProductUnavaiable);
         request.getRequestDispatcher("/checkout.jsp").forward(request, response);
@@ -43,6 +45,7 @@ public class CheckoutController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 
     }
 }

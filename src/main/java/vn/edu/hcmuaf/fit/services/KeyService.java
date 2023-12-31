@@ -13,6 +13,9 @@ import javax.crypto.Cipher;
 import javax.servlet.http.Part;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -48,20 +51,22 @@ public class KeyService {
         // return private key
         return privateKeyToString(keyPair);
     }
-    public void deleteOldKey(int userId){
-            int id = (int) (keyDAO.getByUserId(userId) != null? keyDAO.getByUserId(userId).get("id") : 0);
-            if(id!=0) {
-                keyDAO.deleteById(id);
-            } else {
-                try {
-                    keyDAO.deleteByUserId(userId);
-                } catch (Exception e) {
-                    System.out.println("lỗi");
-                }
+
+    public void deleteOldKey(int userId) {
+        int id = (int) (keyDAO.getByUserId(userId) != null ? keyDAO.getByUserId(userId).get("id") : 0);
+        if (id != 0) {
+            keyDAO.deleteById(id);
+        } else {
+            try {
+                keyDAO.deleteByUserId(userId);
+            } catch (Exception e) {
+                System.out.println("lỗi");
             }
+        }
     }
+
     public String getPublicKeyByUserId(int userId) {
-        return keyDAO.getByUserId(userId) != null ? (String)keyDAO.getByUserId(userId).get("public_key") : null;
+        return keyDAO.getByUserId(userId) != null ? (String) keyDAO.getByUserId(userId).get("public_key") : null;
     }
 
     public String encrypt(String text, String public_key) throws Exception {
@@ -125,15 +130,17 @@ public class KeyService {
                 + publicKey + "\n"
                 + "-----END PUBLIC KEY-----";
     }
+
     public String formatPrivateKey(String privateKey) {
         return "-----BEGIN PRIVATE KEY-----" + "\n"
                 + privateKey + "\n"
                 + "-----END PRIVATE KEY-----";
     }
+
     public Key getKeyByUserId(int id) {
         Map<String, Object> keyDao = new KeyDAO().getByUserId(id);
         Key key = null;
-        if(keyDao!=null) {
+        if (keyDao != null) {
             key = new Key();
             key.setId((int) keyDao.get("id"));
             key.setPublicKey(keyDao.get("public_key").toString());
@@ -142,9 +149,48 @@ public class KeyService {
             key.setUser_id((int) keyDao.get("user_id"));
             key.setStatus((int) keyDao.get("status"));
         }
-
         return key;
     }
+
+    public String sign(String message, PrivateKey privateKey) throws Exception {
+
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        signature.initSign(privateKey);
+        signature.update(message.getBytes());
+
+        byte[] signatureBytes = signature.sign();
+
+        return Base64.getEncoder().encodeToString(signatureBytes);
+    }
+
+    public PrivateKey convertPrivateKey(String keyString, String algorithm) throws Exception {
+
+        byte[] keyBytes = Base64.getDecoder().decode(keyString);
+
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+
+        return keyFactory.generatePrivate(keySpec);
+    }
+
+    public PublicKey convertPublicKey(String keyString, String algorithm) throws Exception {
+
+        byte[] keyBytes = Base64.getDecoder().decode(keyString);
+
+        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+
+        return keyFactory.generatePublic(keySpec);
+    }
+
+    public boolean verify(String messagehash, String signature, PublicKey publicKey) throws Exception {
+        byte[] signatureBytes = Base64.getDecoder().decode(signature);
+        Signature sig = Signature.getInstance("SHA256withRSA");
+        sig.initVerify(publicKey);
+        sig.update(messagehash.getBytes());
+        return sig.verify(signatureBytes);
+    }
+
 
     public boolean checkRSAPublicKeyByText(int userId, String publicKeyString) {
         try {
@@ -191,6 +237,28 @@ public class KeyService {
             return false;
         }
     }
+
+
+    public String readFile(Part filePart) {
+        StringBuilder fileContent = new StringBuilder();
+        String res="";
+        try {
+            InputStream fileContentStream = filePart.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileContentStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fileContent.append(line).append("\n");
+            }
+            res = fileContent.toString().trim()
+                    .replace("-----BEGIN PRIVATE KEY-----","")
+                    .replace("-----END PRIVATE KEY-----","");
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
     public static void main(String[] args) throws Exception {
 //            System.out.println(new KeyService().decrypt("XQZYykbheF9PsCn1xZS+iBXSKEFAox39huFa8mbQGpUe+2lIDwT78UROnCRXwqqfoHxtrF5zSUSzlP4+hnKJqP6SMvCF3FaW1bessVeXQ40MkTbwidS7DFkJSJhuN8srfFIbrfc1jRicl7ZJIq4BNtjFmWfQstHXGxZ9xK+hj3mhJ05htYUNn4zVaQ875gzTVgv7xxw7v2CvP9yzEahIDbLogfXdfLOUH+0c/MTmIcQUipTGdcpQtQWL4WPJsgtUsruIOV9XYTSwBqkszKuL25T3ChfMb8OrRCiLe+6PdUSkOzafRtxt5Z4+Vyz1F0WhRqOW7XaHw5/tRL8kZuGNtA==", "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC9003PfrPMQ3LcbWJb+UAaBTmBx+7Zazd7RPCu4BxeqF8llm1x3Gd+nT1nUMXelumS7exoBF/UV7+XQbIacuoChYzwh5rwPuZRfxkREtd+3lrkyKae7r3W8HzVA+WL0ru9ihjPJfYs0CjonTCzXjqZITyc2PJUiAzAM/AcfgC2ALdB8WpD7hR8pniJDqauBNmgMkvqE0vhyJ/wLyaiiKQJxPpg/pbhDvz/42hzeQnGVpFFF24F26sk2DDesv6sJtLfFG97CiWZQaL/w1ICtINnMZSSWSd9T7ps2ZayBAsOuOSPd1x7Qkg4LDosU6WWbTEkD4Dmy9nm8/IoN/4TF3y7AgMBAAECggEAHS6NyLdGtsEruD1MoK0JsLZa59uvmVcFOXsYsRmc4uRpdCLTAm0KsAlGNkrRkG2MzNysujTp8n/m4T7lPXGrDeYwC44dQI+64o5ycRB/dm6CdKdwDgDPyGpCFpE5yawE1peTRs0kMjFyCIiZwwlaYs4cPlSPtHUR2L5jTE4Gl/PyRS25vZNWYAYnz/1dEDMBiVyPm//Y7obfLVVIMOJ/QM6tS7wvNKpAU1vO+Oei5+YY3ABh6d8Mq7D1K/hqPdVDggaH6iEdmiSQx0EGzi4AKhhmzQQ6CeRGkVNhKt1ekBaYOUgBhWdrr/1wUgoy6bWWG0Ff8jGnAzsqrmStswcl+QKBgQDNVZJbccAJWSWaUaVNgaRwp87j/TGrF9IkZp5/HfRQTNqDe6860UCM8W1KTyYwVP+zdSngKp2dezZqWiob7ov4TVDolEColiXnAGNXFtjMFJdhRhxyW1VQizsg0ScW/eQsrwNkQ7tOlkIT3PQRNkOBhKSfW4uhtWRUHxGYY0DRdwKBgQDsqhQGoavYyx2sfIvNWzrWEasPsIW5Uy3Bbvmh//M6Uh8vtqVlvx6uUcsAkpXIWp+LJyCAj5L1Oa/7mY8OCDGzbngWf7NDC/JRqecOICfihClpGralYDkpyJEOojcYXTurWmMTzRawQ9iB8x+6FedfQbiAcKhKkUyW6CjPCrTf3QKBgQCOG7QgP5iFn8ILjIgYHSpeoXTpizlNzT2t3avCFEwbKyVsLDS5Q0smgIyACklG1/zkCamCsFvHOxgNAPv1uuH6ZiAh50DcrJXsyvL1uiUvEO038FsNtjJUfRfd/YLNQcgiOLnjMZE3sXxn3Nq58tFDmTaJ58S6lRyrr5jw23hnvwKBgHoHOEwzEGi4UpSdo3g/khbPBWURn+HvAai7j/v3/XIU5f+0LZRI94jqo8Gn05N7JsiZZCjl3uCS3irdAuY5U2cxjroLHmNzxX5WHM0rx2UEwFVxcLvU4aSpxiHFgqMNb7bq5CtRlGFOmlRnB/TrVmHHgVq4vA223cbx7hjTbHABAoGBAJnVjslIH1n4JEkzJPr9mAyBgmixcSLOL2O+YCSi4M9aRD9EB82tUYMJ1lwM+1G8gCdx2ObAdeHzZzCGbMPxNG6yC0ij/dILqp67K6z5SfHiQHKOynS7W/smHKJU7eFtiMviT90QCG45vhFHVpaS+xSJiHL1Wvf+bqDNY4CKxF2Y"));
