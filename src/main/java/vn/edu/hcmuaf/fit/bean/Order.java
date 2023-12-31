@@ -16,8 +16,11 @@ public class Order implements Serializable {
     List<Item> listItems;
     float total;
     int status;
+    String hash_message;
 
-    public Order(int id, int user_id, String name, String phone, String address, Timestamp time, String note, Coupon coupon, List<Item> listItems, float total, int status) {
+    int key_id;
+
+    public Order(int id, int user_id, String name, String phone, String address, Timestamp time, String note, Coupon coupon, List<Item> listItems, float total, int status, String hash_message, int key_id) {
         this.id = id;
         this.user_id = user_id;
         this.name = name;
@@ -29,6 +32,8 @@ public class Order implements Serializable {
         this.listItems = listItems;
         this.total = total;
         this.status = status;
+        this.hash_message = hash_message;
+        this.key_id = key_id;
     }
 
     public Order() {
@@ -106,7 +111,23 @@ public class Order implements Serializable {
         this.status = status;
     }
 
-//    public void setTotal() {
+    public String getHash_message() {
+        return hash_message;
+    }
+
+    public void setHash_message(String hash_message) {
+        this.hash_message = hash_message;
+    }
+
+    public int getKey_id() {
+        return key_id;
+    }
+
+    public void setKey_id(int key_id) {
+        this.key_id = key_id;
+    }
+
+    //    public void setTotal() {
 //        if(this.cart != null) {
 //            this.total = this.cart.getTotalMoney();
 //        }
@@ -148,19 +169,22 @@ public class Order implements Serializable {
         this.coupon = coupon;
     }
 
-
     @Override
     public String toString() {
-        return "Order{" + "id="+id+
+        return "Order{" +
+                "id=" + id +
                 ", user_id=" + user_id +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", time=" + time +
                 ", note='" + note + '\'' +
-
+                ", coupon=" + coupon +
+                ", listItems=" + listItems +
                 ", total=" + total +
                 ", status=" + status +
+                ", hash_message='" + hash_message + '\'' +
+                ", key_id=" + key_id +
                 '}';
     }
 }

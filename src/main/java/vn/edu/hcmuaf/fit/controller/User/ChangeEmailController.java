@@ -28,9 +28,10 @@ public class ChangeEmailController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
 
-
         String oldEmail = req.getParameter("oldEmail");
         String newEmail = req.getParameter("newEmail");
+        String message = oldEmail + newEmail;
+
         Part filePart = req.getPart("private-key");
 
         try (InputStream inputStream = filePart.getInputStream();
@@ -39,33 +40,37 @@ public class ChangeEmailController extends HttpServlet {
             StringBuilder privateKeyBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
-                privateKeyBuilder.append(line).append("\n");
+                privateKeyBuilder.append(line);
             }
-
             String privateKey = privateKeyBuilder.toString().trim()
                     .replace("-----BEGIN PRIVATE KEY-----","")
                     .replace("-----END PRIVATE KEY-----","");
-            System.out.println(privateKey);
             User user = (User) session.getAttribute("user");
+            if(user.getEmail().equals(oldEmail)) {
 
-            KeyService keyService = new KeyService();
-            UserService userService = new UserService();
+                KeyService keyService = new KeyService();
+                UserService userService = new UserService();
 
-            try {
-                String currentEmailEncrypt = keyService.encrypt(user.getEmail(), keyService.getKeyByUserId(user.getId()).getPublicKey());
-                String currentEmailDecrypt = keyService.decrypt(currentEmailEncrypt, privateKey);
+                String messageEncrypt = keyService.encrypt(message, keyService.getKeyByUserId(user.getId()).getPublicKey());
+                String sign = keyService.sign(messageEncrypt, KeyService.stringToPrivateKey(privateKey));
+                boolean verify = keyService.verify(messageEncrypt, sign, KeyService.stringToPublicKey(keyService.getKeyByUserId(user.getId()).getPublicKey()));
 
-                if (oldEmail.equals(currentEmailDecrypt)) {
+                if (verify) {
                     user.setEmail(newEmail);
                     userService.update(user);
                     resp.getWriter().write("1");
                 } else {
-                    resp.getWriter().write("2");
+                    resp.getWriter().write("3");
                 }
-
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } else {
+                resp.getWriter().write("2");
             }
+
+        }
+        catch (Exception e) {
+            System.out.println("Vao day 2");
+            e.printStackTrace();
+            throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
         }
     }
 

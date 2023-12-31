@@ -90,14 +90,6 @@
                         />
                       </div>
                       <span class="text-danger" id="register-username-error"></span>
-                      <input
-                              type="file"
-                              name="private-key"
-                              title="Private key"
-                              accept=".key"
-                              onchange="validateFile()"
-                              required
-                      />
                       <span class="text-danger" id="file-error"></span>
                       <div class="button-box">
                         <button class="register-btn btn" type="submit">
@@ -179,25 +171,6 @@
     });
   })
 
-  const validateFile = () => {
-    var fileInput = document.querySelector('input[name="private-key"]');
-    var errorSpan = document.getElementById('file-error');
-
-    // Kiểm tra nếu có file được chọn
-    if (fileInput.files.length > 0) {
-      var fileName = fileInput.files[0].name;
-
-      // Kiểm tra nếu tên file không kết thúc bằng ".key"
-      if (!fileName.endsWith('.key')) {
-        errorSpan.innerText = 'Vui lòng chọn file có đuôi ".key"';
-        fileInput.value = ''; // Xóa giá trị file nếu không hợp lệ
-        return;
-      }
-    }
-
-    // Nếu không có lỗi, xóa thông báo lỗi
-    errorSpan.innerText = '';
-  }
 
 </script>
 </body>
