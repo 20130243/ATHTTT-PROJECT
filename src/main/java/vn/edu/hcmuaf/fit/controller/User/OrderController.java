@@ -40,15 +40,18 @@ public class OrderController extends HttpServlet {
             String addressDistrict = request.getParameter("addressDistrict");
             String addressWard = request.getParameter("addressWard");
             String noteUser = request.getParameter("noteUser");
+            int priceLogistic = Integer.parseInt(request.getParameter("priceLogistic"));
+            int total = (int) (cart.getTotalMoney() + priceLogistic);
             int key_id = key.getId();
+            String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
 
-            String message = nameUser + phoneUser + addressUser + addressCity + addressDistrict + addressWard + noteUser;
+            String message = (nameUser.trim() + phoneUser.trim() + address.trim() + noteUser.trim() + total);
             Part filePart = request.getPart("fileInput");
             String content_file = keyService.readFile(filePart).trim();
             boolean verify = false;
             String sign = "";
             try {
-                String hash_message = keyService.encrypt(message,key.getPublicKey());
+                String hash_message = keyService.hashString(message);
                 sign = keyService.sign(hash_message,keyService.convertPrivateKey(content_file, "RSA"));
                 verify = keyService.verify(hash_message,sign,keyService.convertPublicKey(key.getPublicKey(),"RSA"));
             } catch (Exception e) {
@@ -56,9 +59,7 @@ public class OrderController extends HttpServlet {
                 throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
             }
 
-            int priceLogistic = Integer.parseInt(request.getParameter("priceLogistic"));
 
-            String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
 
             if (nameUser.equals("") || phoneUser.equals("") || addressUser.equals("")) {
                 System.out.println("sign: " + sign);

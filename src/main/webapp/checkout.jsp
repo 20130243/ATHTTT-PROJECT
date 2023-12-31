@@ -558,34 +558,10 @@
   $("#order_form").submit(function (e) {
     e.preventDefault();
     var formData = new FormData(this);
-    // var form = this;
-    // var nameUser = $(form).find('input[name="nameUser"]').val();
-    // var phoneUser = $(form).find('input[name="phoneUser"]').val();
-    // var addressUser = $(form).find('textarea[name="addressUser"]').val();
-    // var addressCity = $(form).find('select[name="addressCity"]').val();
-    // var addressDistrict = $(form).find('select[name="addressDistrict"]').val();
-    // var addressWard = $(form).find('select[name="addressWard"]').val();
-    // var noteUser = $(form).find('textarea[name="noteUser"]').val();
-    // var coupon = $(form).find('input[name="coupon"]').val();
-    // var priceLogistic = $(form).find('input[name="priceLogistic"]').val();
-    // var fileInput = $(form).find('input[id="fileInput"]')[0].files[0];
-    // var data = {
-    //   nameUser: nameUser,
-    //   phoneUser: phoneUser,
-    //   addressUser: addressUser,
-    //   addressCity: addressCity,
-    //   addressDistrict: addressDistrict,
-    //   addressWard: addressWard,
-    //   noteUser: noteUser,
-    //   coupon: coupon,
-    //   priceLogistic: priceLogistic,
-    //   fileInput: fileInput
-    // };
 
     $.ajax({
       type: $(this).attr('method'),
       url: $(this).attr('action'),
-      // data: data,
       data: formData,
       contentType: false,
       processData: false,

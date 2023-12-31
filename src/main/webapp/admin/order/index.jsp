@@ -100,11 +100,11 @@
                                             <th>Tổng tiền</th>
                                             <th>Trạng thái</th>
                                             <th style="width: 125px;">Hành động</th>
+                                            <th> Xác nhận</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <c:forEach var="item" items="${requestScope['orderList']}">
-
                                             <tr>
                                                 <td><a href="../admin/order/update?id=${item.id}"
                                                        class="text-body font-weight-bold">${item.id}</a>
@@ -133,22 +133,21 @@
                                                 <td>
                                                     <h5>
                                                         <c:choose>
-                                                            <c:when test="${item.status eq 0}">
+                                                            <c:when test="${item.status eq 1}">
                                                                 <span class="badge badge-light">Đang chờ</span>
                                                             </c:when>
-                                                            <c:when test="${item.status eq 1}">
+                                                            <c:when test="${item.status eq 2}">
                                                                 <span class="badge badge-info">Đang chuẩn bị</span>
-                                                            </c:when><c:when test="${item.status eq 2}">
+                                                            </c:when><c:when test="${item.status eq 3}">
                                                                 <span class="badge badge-info-lighten">Đang vận chuyển</span>
                                                             </c:when>
-                                                            <c:when test="${item.status eq 3}">
+                                                            <c:when test="${item.status eq 4}">
                                                                 <span class="badge badge-success">Thành công</span>
                                                             </c:when>
                                                             <c:otherwise>
                                                                 <span class="badge badge-danger">Đã hủy</span>
                                                             </c:otherwise>
                                                         </c:choose>
-
                                                     </h5>
                                                 </td>
                                                 <td><a
@@ -160,6 +159,21 @@
                                                                                data-name="${item.id}"
                                                                                data-id="${item.id}"></i>
                                                     </a>
+                                                </td>
+                                                <td>
+                                                    <c:forEach var="item1" items="${requestScope['verifyMap']}">
+                                                        <c:if test="${item1.key eq item.id}">
+                                                            <c:choose>
+                                                                <c:when test="${item1.value eq 1}">
+                                                                    <span class="badge badge-success">Đã xác thực</span>
+                                                                </c:when>
+                                                                <c:when test="${item1.value eq 0}">
+                                                                    <span class="badge badge-danger">Lỗi xác thực</span>
+                                                                </c:when>
+                                                            </c:choose>
+<%--                                                            ${item1.value}--%>
+                                                        </c:if>
+                                                    </c:forEach>
                                                 </td>
                                             </tr>
                                         </c:forEach>
