@@ -667,6 +667,11 @@
                     $('#confirmBtn_2').removeClass('loading');
                     $('#confirmBtn_2').prop("disabled", false);
                 }
+                if(data == 3) {
+                    alert("Không thể Verify!")
+                    $('#confirmBtn_2').removeClass('loading');
+                    $('#confirmBtn_2').prop("disabled", false);
+                }
             },
             error: function (data) {
                 alert("Private key không đúng!")
