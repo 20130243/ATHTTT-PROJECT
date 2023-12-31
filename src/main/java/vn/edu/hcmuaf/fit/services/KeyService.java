@@ -12,6 +12,7 @@ import vn.edu.hcmuaf.fit.dao.KeyDAO;
 import javax.crypto.Cipher;
 import javax.servlet.http.Part;
 import java.io.*;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,6 +105,8 @@ public class KeyService {
     }
 
 
+
+
     public static String publicKeyToString(KeyPair keyPair) {
         return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
     }
@@ -154,7 +157,7 @@ public class KeyService {
 
     public String sign(String message, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 
-        Signature signature = Signature.getInstance("SHA256withRSA");
+        Signature signature = Signature.getInstance("MD5withRSA");
         signature.initSign(privateKey);
         signature.update(message.getBytes());
 
@@ -185,7 +188,7 @@ public class KeyService {
 
     public boolean verify(String messagehash, String signature, PublicKey publicKey) throws Exception {
         byte[] signatureBytes = Base64.getDecoder().decode(signature);
-        Signature sig = Signature.getInstance("SHA256withRSA");
+        Signature sig = Signature.getInstance("MD5withRSA");
         sig.initVerify(publicKey);
         sig.update(messagehash.getBytes());
         return sig.verify(signatureBytes);
@@ -235,6 +238,17 @@ public class KeyService {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public String hashString(String dataInput) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] output = md.digest(dataInput.getBytes());
+            BigInteger num = new BigInteger(1, output);
+            return num.toString(16);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 
