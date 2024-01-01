@@ -41,11 +41,11 @@ public class HomeController extends HttpServlet {
                 int status = order.getStatus();
                 String bill = order.getName().trim() + order.getPhone().trim() + order.getAddress().trim() + order.getNote().trim() + total;
                 String hash_message = order.getHash_message() != null ? order.getHash_message().trim() : "" ;
-                Key key = keyService.getKeyByUserId(order.getUser_id());
+                Key key = keyService.getKeyByOrderId(id);
                 String hash_bill = keyService.hashString(bill);
-                boolean verify = keyService.verify(hash_bill,hash_message,keyService.convertPublicKey(key.getPublicKey(),"RSA"));
-                if (status < 4 && !verify) {
-                    orderService.updateStatus(order, 5);
+                boolean verify = keyService.verify(hash_bill,hash_message,KeyService.stringToPublicKey(key.getPublicKey()));
+                if (status < 3 && !verify) {
+                    orderService.updateStatus(order, 4);
                 }
                 verifyMap.put(id, (verify) ? 1 : 0);
             }

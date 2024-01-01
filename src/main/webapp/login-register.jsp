@@ -119,9 +119,9 @@
                                             <hr class="mb-4 mt-1">
                                             <div class="d-flex justify-content-center text-center pt-1">
 
-                                                <div class="col">
-                                                    <div id="ButtonGoogleLogin"></div>
-                                                </div>
+<%--                                                <div class="col">--%>
+<%--                                                    <div id="ButtonGoogleLogin"></div>--%>
+<%--                                                </div>--%>
                                             </div>
                                         </form>
                                     </div>
@@ -130,7 +130,8 @@
                             <div id="lg2" class="tab-pane">
                                 <div class="login-form-container">
                                     <div class="login-register-form">
-                                        <form action="${pageContext.request.contextPath}/register" method="post" id="register">
+                                        <form action="${pageContext.request.contextPath}/register" method="post"
+                                              id="register">
                                             <div class="login-input-box">
                                                 <span class="text-danger" id="register-name-error"></span>
                                                 <small id="nameHelpInline" class="text-muted mb-3">
@@ -186,7 +187,9 @@
                                                            onchange="changeTerm()"
                                                     />
                                                     <label for="agreeTerms">
-                                                        Tôi đồng ý với <a style="color: #00adef; margin-left: 5px" href="#"> Điều khoản sử dụng</a>
+                                                        Tôi đồng ý với <a style="color: #00adef; margin-left: 5px"
+                                                                          href="policy.html" target="_blank"> Điều khoản
+                                                        sử dụng</a>
                                                     </label>
                                                 </div>
                                                 <button class="register-btn btn" type="submit" disabled
@@ -205,6 +208,32 @@
         </div>
     </div>
 </section>
+<!-- Modal HTML -->
+<div class="modal" id="privateKeyModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thông Báo: Private Key Đã Được Gửi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Xin chào <span id="userNamePlaceholder"></span>,</p>
+                <p>Cảm ơn bạn đã đăng ký tài khoản trên Hahati Shop. Chúng tôi đã gửi private key liên quan đến tài khoản của bạn.</p>  
+                <p>Private key này sẽ được sử dụng như một chữ ký điện tử khi bạn đặt hàng, giúp xác thực danh tính của bạn và đảm bảo tính toàn vẹn của thông tin đặt hàng.</p>
+                <p>Vui lòng kiểm tra email của bạn để nhận private key và giữ nó an toàn. Private key là một yếu tố quan trọng để truy cập và bảo vệ tài khoản của bạn.</p>
+                <p>Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ, hãy liên hệ với đội ngũ hỗ trợ của chúng tôi.</p>
+                <p>Trân trọng,<br>Đội ngũ Hahati Shop</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirectAfterClose()">Tôi đã hiểu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Footer Section Begin -->
 <%@include file="footer.jsp" %>
 <!-- Footer Section End -->
@@ -225,26 +254,6 @@
 <script src="js/main.js"></script>
 <script src="js/account/bootstrap.min.js"></script>
 <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
-<script>
-    function handleCredentialResponse(response) {
-        const resp = jwt_decode(response.credential);
-
-        window.location.href = 'Login?action=Google&name=' + resp.name + '&email=' + resp.email + '&id=' + resp.sub;
-    }
-
-    window.onload = function () {
-        google.accounts.id.initialize({
-            client_id: "862913517251-8g2qrfue12q6gojci1tulp9qtfi4hmqv.apps.googleusercontent.com",
-            callback: handleCredentialResponse
-        });
-        google.accounts.id.renderButton(
-            document.getElementById("ButtonGoogleLogin"),
-            {theme: "outline", size: "large"}  // customization attributes
-        );
-        google.accounts.id.prompt(); // also display the One Tap dialog
-    }
-</script>
-
 <script src="js/validate.js"></script>
 <script type="text/javascript">
     $("#login").submit(function (e) {
@@ -279,25 +288,10 @@
                 var responseData = data.split(';');
                 if (1 == data) {
                     $("#register-username-error").text("Tên đăng nhập đã được sử dụng");
-                } else if (2 == responseData[0]) {
-                    var userName = responseData[1];
-                    var privateKey = responseData[2];
-                    if(privateKey) {
-                        var blob = new Blob([privateKey], {type: 'text/plan'})
-                        var blobUrl = URL.createObjectURL(blob)
+                } else if (2 == data) {
 
-                        var link = document.createElement('a')
-                        link.href = blobUrl
-                        link.download = userName + '_private_key.key'
-                        document.body.appendChild(link)
-                        link.click();
-
-                        URL.revokeObjectURL(blobUrl)
-                        document.body.removeChild(link)
-                        window.location.href = "./";
-                    } else {
-                        console.error("Private key not found in session.");
-                    }
+                    // $('#privateKeyModal').showModal();
+                    $('#privateKeyModal').modal('show');
                 }
 
             },
@@ -307,31 +301,13 @@
             },
         });
     });
-
-    $("#lost-sign").submit(function (e) {
-        e.preventDefault();
-        console.log($(this).serialize());
-        $.ajax({
-            type: $(this).attr('method'),
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            success: function (data) {
-                if(data == 1) {
-                $('#lostsign-email-error').text("Địa chỉ email không đúng!");
-                }
-                else if (2 == data) {
-                        window.location.href = "./";
-                }
-            },
-            error: function (data) {
-                console.log('An error occurred.');
-                console.log(data);
-            },
-        });
-    });
+    function redirectAfterClose() {
+        $('#privateKeyModal').modal('hide'); // Ẩn modal
+        window.location.href = "./"; // Chuyển hướng
+    }
 
 
-    const countdown =(time) => {
+    const countdown = (time) => {
         setTimeout(() => {
             $("#login-username-error").text("");
             $(".login-btn").attr("disabled", false);
@@ -344,17 +320,12 @@
         var checkTerm = document.getElementById("agreeTerms");
         var buttonRegister = document.getElementsByClassName("register-btn")[0];
 
-        if(checkTerm.checked) {
+        if (checkTerm.checked) {
             buttonRegister.disabled = false;
         } else {
             buttonRegister.disabled = true;
         }
     }
-
-
-
-
-
 </script>
 
 </body>

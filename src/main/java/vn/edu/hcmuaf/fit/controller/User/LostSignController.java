@@ -44,7 +44,17 @@ public class LostSignController extends HttpServlet {
             } catch (IOException e) {
                 throw new RuntimeException("Error writing private key to file", e);
             }
-            UserService.sendMailFile(user.getEmail(), "Private key", "Cấp lại private key", tempFile.getAbsolutePath());
+            String emailSubject = "Cấp Lại Private Key cho Tài Khoản Hahati Shop của Bạn";
+            String emailBody = "Xin chào " + user.getName() + ",\n\n"
+                    + "Chúng tôi nhận được yêu cầu của bạn về việc cấp lại private key cho tài khoản Hahati Shop.\n\n"
+                    + "Dưới đây là private key mới cho tài khoản của bạn:\n\n"
+                    + "Xin vui lòng giữ an toàn thông tin này và không chia sẻ với người khác.\n\n"
+                    + "Nếu có bất kỳ vấn đề hoặc câu hỏi nào, hãy liên hệ với đội hỗ trợ của chúng tôi.\n\n"
+                    + "Trân trọng,\n"
+                    + "Đội ngũ Hahati Shop";
+
+            UserService.sendMailFile(user.getEmail(), emailSubject, emailBody, tempFile.getAbsolutePath());
+
             response.getWriter().write("2");
         } else {
             response.getWriter().write("1");

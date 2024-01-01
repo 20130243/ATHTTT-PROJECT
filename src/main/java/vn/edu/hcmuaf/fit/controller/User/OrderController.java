@@ -30,7 +30,7 @@ public class OrderController extends HttpServlet {
         CartOrderService cartOrderService = new CartOrderService();
 
         KeyService keyService = new KeyService();
-        Key key = keyService.getKeyByUserId(user.getId());
+
 
         if (cart != null && user != null) {
             String nameUser = request.getParameter("nameUser");
@@ -42,6 +42,7 @@ public class OrderController extends HttpServlet {
             String noteUser = request.getParameter("noteUser");
             int priceLogistic = Integer.parseInt(request.getParameter("priceLogistic"));
             int total = (int) (cart.getTotalMoney() + priceLogistic);
+            Key key = keyService.getKeyByUserId(user.getId());
             int key_id = key.getId();
             String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
 
@@ -52,8 +53,8 @@ public class OrderController extends HttpServlet {
             String sign = "";
             try {
                 String hash_message = keyService.hashString(message);
-                sign = keyService.sign(hash_message,keyService.convertPrivateKey(content_file, "RSA"));
-                verify = keyService.verify(hash_message,sign,keyService.convertPublicKey(key.getPublicKey(),"RSA"));
+                sign = keyService.sign(hash_message, KeyService.stringToPrivateKey(content_file));
+                verify = keyService.verify(hash_message,sign, KeyService.stringToPublicKey(key.getPublicKey()));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
@@ -62,11 +63,8 @@ public class OrderController extends HttpServlet {
 
 
             if (nameUser.equals("") || phoneUser.equals("") || addressUser.equals("")) {
-                System.out.println("sign: " + sign);
-                System.out.println("checkverify :" + verify);
-
-//                request.setAttribute("addressUser", nameUser);
-//                request.setAttribute("noteUser", noteUser);
+//                System.out.println("sign: " + sign);
+//                System.out.println("checkverify :" + verify);
                 response.getWriter().write("1");
             } else {
                 if (!verify) {

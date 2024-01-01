@@ -1,10 +1,12 @@
 package vn.edu.hcmuaf.fit.dao;
 
+import vn.edu.hcmuaf.fit.bean.Key;
 import vn.edu.hcmuaf.fit.db.JDBIConnector;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 public class KeyDAO {
@@ -60,7 +62,18 @@ public class KeyDAO {
 
 
 
+    public Map<String,Object> getByOrderId(int orderId) {
+        return JDBIConnector.get().withHandle(h ->
+                h.createQuery("SELECT k.* FROM `" + tableName + "` k JOIN orders o ON k.id = o.key_id WHERE o.id = :orderId")
+                        .bind("orderId", orderId)
+                        .mapToMap()
+                        .findOne()
+                        .orElse(null));
+    }
+
     public static void main(String[] args) {
-//        new KeyDAO().create("",1,0);
+        KeyDAO k = new KeyDAO();
+        System.out.println(k.getByOrderId(32));
+
     }
 }

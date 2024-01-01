@@ -32,7 +32,7 @@
         height: 20px;
         margin: -10px 0 0 -10px;
         border-radius: 50%;
-        border: 2px solid  #0b2e13;
+        border: 2px solid #0b2e13;
         border-top-color: #fff;
         animation: spin .8s linear infinite;
         opacity: 1;
@@ -49,7 +49,7 @@
 <body>
 
 <%
-    int keyCheck =(request.getAttribute("key") != null) ? (int)request.getAttribute("key") : 0;
+    int keyCheck = (request.getAttribute("key") != null) ? (int) request.getAttribute("key") : 0;
     User user = (User) session.getAttribute("user");
     CurrencyFormat format = new CurrencyFormat();
     if (user != null) {
@@ -158,82 +158,100 @@
                                                     </p>
                                                     <p>(+84) <%=user.getPhone()%>
                                                     </p>
-                                                  <div class="key-container">
-                                                      <div id="lost-sign" class="button-lost-sign">
-                                                          <div>
-                                                              Mất file chữ ký
-                                                          </div>
+                                                    <div class="key-container">
+                                                        <div id="lost-sign" class="button-lost-sign">
+                                                            <div>
+                                                                Mất file chữ ký
+                                                            </div>
 
-                                                      </div>
-                                                      <div id="myModal" class="modal">
-                                                          <div class="modal-content">
-                                                              <span class="close" id="closeModal">&times;</span>
-                                                              <form action="${pageContext.request.contextPath}/lostSign" method="post"
-                                                                    id="lost-sign__form">
-                                                                  <span class="text-danger" id="lostsign-email-error" style=" display: flex;"></span>
-                                                                  <label for="emailCheck">Email:</label>
-                                                                  <input type="email" id="emailCheck" name="emailCheck" style="width: 100%;" required>
-                                                                  <p class="text-success" style=" display: flex;">Private Key sẽ được gửi vào email này!</p>
-                                                                  <button id="confirmBtn" class="submit-button-lost-sign">Xác nhận</button>
-                                                              </form>
-                                                          </div>
-                                                      </div>
-                                                      <div id="import-key__div" class="button-lost-sign">
-                                                          <div>
-                                                              Import Key
-                                                          </div>
+                                                        </div>
+                                                        <div id="myModal" class="modal">
+                                                            <div class="modal-content"
+                                                                 style="transform: translate(-50%, -50%);padding: 20px;">
+                                                                <span class="close" id="closeModal">&times;</span>
+                                                                <form action="${pageContext.request.contextPath}/lostSign"
+                                                                      method="post"
+                                                                      id="lost-sign__form">
+                                                                    <span class="text-danger" id="lostsign-email-error"
+                                                                          style=" display: flex;"></span>
+                                                                    <label for="emailCheck">Email:</label>
+                                                                    <input type="email" id="emailCheck"
+                                                                           name="emailCheck" style="width: 100%;"
+                                                                           required>
+                                                                    <p class="text-success" style=" display: flex;">Nhập
+                                                                        email của bạn.
+                                                                        <br> Private Key sẽ được gửi vào email này!</p>
+                                                                    <button id="confirmBtn"
+                                                                            class="submit-button-lost-sign">Xác nhận
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div id="import-key__div" class="button-lost-sign">
+                                                            <div>
+                                                                Import Key
+                                                            </div>
 
-                                                      </div>
-                                                      <div id="myModal3" class="modal">
-                                                          <div class="modal-content">
-                                                              <span class="close" id="closeModal3">&times;</span>
-                                                              <form action="${pageContext.request.contextPath}/importkey" method="post"
-                                                                    enctype="multipart/form-data"
-                                                                    id="import_key"
-                                                                    onsubmit=" return validateForm()">
-                                                                  <span class="text-danger" id="import_key__error" style=" display: flex;"></span>
+                                                        </div>
+                                                        <div id="myModal3" class="modal">
+                                                            <div class="modal-content"
+                                                                 style="transform: translate(-50%, -50%);padding: 20px;">
+                                                                <span class="close" id="closeModal3">&times;</span>
+                                                                <form action="${pageContext.request.contextPath}/importkey"
+                                                                      method="post"
+                                                                      enctype="multipart/form-data"
+                                                                      id="import_key"
+                                                                      onsubmit=" return validateForm()">
+                                                                    <span class="text-danger" id="import_key__error"
+                                                                          style=" display: flex;"></span>
 
-                                                                  <!-- Thêm phần chọn loại nhập key -->
-                                                                  <label for="import-type">Chọn cách nhập key:</label>
-                                                                  <select id="import-type" onchange="toggleImportMethod()">
-                                                                      <option value="text">Nhập key bằng text</option>
-                                                                      <option value="file">Nhập key bằng file</option>
-                                                                  </select>
+                                                                    <!-- Thêm phần chọn loại nhập key -->
+                                                                    <label for="import-type">Chọn cách nhập key:</label>
+                                                                    <select id="import-type"
+                                                                            onchange="toggleImportMethod()">
+                                                                        <option value="text">Nhập key bằng text</option>
+                                                                        <option value="file">Nhập key bằng file</option>
+                                                                    </select>
 
-                                                                  <!-- Phần nhập key bằng text -->
-                                                                  <div id="text-import" style="display: block;">
-                                                                      <label for="text_publickey">Nhập Public Key:</label>
-                                                                      <textarea
-                                                                              id="text_publickey"
-                                                                              name="public-key-text"
-                                                                              title="Private key"
-                                                                              rows="4"
-                                                                              cols="38"
-                                                                              placeholder="Dán key vào đây"
-                                                                      ></textarea>
-                                                                  </div>
+                                                                    <!-- Phần nhập key bằng text -->
+                                                                    <div id="text-import" style="display: block;">
+                                                                        <label for="text_publickey">Nhập Public
+                                                                            Key:</label>
+                                                                        <textarea
+                                                                                id="text_publickey"
+                                                                                name="public-key-text"
+                                                                                title="Private key"
+                                                                                rows="4"
+                                                                                cols="38"
+                                                                                placeholder="Dán key vào đây"
+                                                                        ></textarea>
+                                                                    </div>
 
-                                                                  <!-- Phần nhập key bằng file -->
-                                                                  <div id="file-import" style="display: none;">
-                                                                      <label for="file_publickey">Chọn File Public Key:</label>
-                                                                      <input
-                                                                              id="file_publickey"
-                                                                              type="file"
-                                                                              name="public-key-file"
-                                                                              title="Public key"
-                                                                              accept=".key"
-                                                                              onchange="validateFile()"
-                                                                      />
-                                                                  </div>
+                                                                    <!-- Phần nhập key bằng file -->
+                                                                    <div id="file-import" style="display: none;">
+                                                                        <label for="file_publickey">Chọn File Public
+                                                                            Key:</label>
+                                                                        <input
+                                                                                id="file_publickey"
+                                                                                type="file"
+                                                                                name="public-key-file"
+                                                                                title="Public key"
+                                                                                accept=".key"
+                                                                                onchange="validateFile()"
+                                                                        />
+                                                                    </div>
 
-                                                                  <!-- Trường ẩn để lưu loại nhập liệu -->
-                                                                  <input type="hidden" id="import-type-hidden" name="import-type" value="text">
+                                                                    <!-- Trường ẩn để lưu loại nhập liệu -->
+                                                                    <input type="hidden" id="import-type-hidden"
+                                                                           name="import-type" value="text">
 
-                                                                  <button id="confirmBtn3" class="submit-button-lost-sign">Xác nhận</button>
-                                                              </form>
-                                                          </div>
-                                                      </div>
-                                                  </div>
+                                                                    <button id="confirmBtn3"
+                                                                            class="submit-button-lost-sign">Xác nhận
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="d111 col-md-8"
                                                      style="border-left: rgb(255, 255, 255) 10px solid">
@@ -254,16 +272,21 @@
 
                                                     </div>
                                                     <div id="myModal_2" class="modal">
-                                                        <div class="modal-content">
+                                                        <div class="modal-content"
+                                                             style="transform: translate(-50%, -50%);padding: 20px;">
                                                             <span class="close" id="closeModal_2">&times;</span>
-                                                            <form action="${pageContext.request.contextPath}/changeEmail" method="post"
+                                                            <form action="${pageContext.request.contextPath}/changeEmail"
+                                                                  method="post"
                                                                   enctype="multipart/form-data"
                                                                   id="change-email__form">
-                                                                <span class="text-danger" id="lostsign-email-error_2" style=" display: flex;"></span>
+                                                                <span class="text-danger" id="lostsign-email-error_2"
+                                                                      style=" display: flex;"></span>
                                                                 <label for="oldEmail">Email cũ:</label>
-                                                                <input type="email" id="oldEmail" name="oldEmail" style="width: 100%;" required>
+                                                                <input type="email" id="oldEmail" name="oldEmail"
+                                                                       style="width: 100%;" required>
                                                                 <label for="newEmail">Email mới:</label>
-                                                                <input type="email" id="newEmail" name="newEmail" style="width: 100%;" required>
+                                                                <input type="email" id="newEmail" name="newEmail"
+                                                                       style="width: 100%;" required>
                                                                 <label for="file_privatekey">File Private Key:</label>
                                                                 <input
                                                                         id="file_privatekey"
@@ -275,7 +298,9 @@
                                                                         required
                                                                 />
                                                                 <span class="text-danger" id="file-error"></span>
-                                                                <button id="confirmBtn_2" value="upload" class="submit-button-lost-sign">Xác nhận</button>
+                                                                <button id="confirmBtn_2" value="upload"
+                                                                        class="submit-button-lost-sign">Xác nhận
+                                                                </button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -441,7 +466,8 @@
                                                         <td><%=format.format((int) order.getTotal())%>
                                                         </td>
                                                         <td>
-                                                            <a href="orderDetail?orderid=<%=order.getId()%>" class="view"
+                                                            <a href="orderDetail?orderid=<%=order.getId()%>"
+                                                               class="view"
                                                                target="_blank">Xem</a>
                                                         </td>
                                                     </tr>
@@ -569,36 +595,36 @@
 <script src="assets/js/vendor/jquery-3.5.1.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/slick.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/jquery.nice-select.min.js"></script>
-<script src="js/lostSignModal.js"/>
 <script src="assets/js/vendor/account/js/plugins/image-zoom.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/fancybox.js"></script>
 <script src="assets/js/vendor/account/js/plugins/scrollup.min.js"></script>
 <script src="assets/js/vendor/account/js/plugins/jqueryui.min.js"></script>
 <script src="assets/js/vendor/account/js/main.js"></script>
+<script src="js/lostSignModal.js"></script>
 <script type="text/javascript">
     $("#lost-sign__form").submit(function (e) {
         e.preventDefault();
-        $('#confirmBtn').addClass('loading');
-        $('#confirmBtn').prop("disabled", true);
+        var confirmBtn = $('#confirmBtn');
+        confirmBtn.addClass('loading');
+        confirmBtn.prop("disabled", true);
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function (data) {
-                if(data == 1) {
+                if (data == 1) {
                     $('#lostsign-email-error').text("Địa chỉ email không đúng!");
-                    $('#confirmBtn').removeClass('loading');
-                    $('#confirmBtn').prop("disabled", false);
-                }
-                else if (2 == data) {
-                    $('#confirmBtn').removeClass('loading');
-                    $('#confirmBtn').prop("disabled", false);
+                    confirmBtn.removeClass('loading');
+                    confirmBtn.prop("disabled", false);
+                } else if (2 == data) {
+                    confirmBtn.removeClass('loading');
+                    confirmBtn.prop("disabled", false);
                     window.location.href = "./account";
                 }
             },
             error: function (data) {
-                $('#confirmBtn').removeClass('loading');
-                $('#confirmBtn').prop("disabled", false);
+                confirmBtn.removeClass('loading');
+                confirmBtn.prop("disabled", false);
                 console.log('An error occurred: ' + data);
             },
         });
@@ -606,8 +632,10 @@
 
     $("#import_key").submit(function (e) {
         e.preventDefault();
-        $('#confirmBtn3').addClass('loading');
-        $('#confirmBtn3').prop("disabled", true);
+        var confirmBtn3 = $('#confirmBtn3');
+
+        confirmBtn3.addClass('loading');
+        confirmBtn3.prop("disabled", true);
         var formData = new FormData(this);
         $.ajax({
             type: $(this).attr('method'),
@@ -616,40 +644,42 @@
             contentType: false,
             processData: false,
             success: function (data) {
-                if(1 == data) {
+                if (1 == data) {
                     console.log(data)
                     $("#myModal3").hide();
-                    $('#confirmBtn3').removeClass('loading');
-                    $('#confirmBtn3').prop("disabled", false);
+                    alert("Import key thành công.");
+                    confirmBtn3.removeClass('loading');
+                    confirmBtn3.prop("disabled", false);
                 }
-                if(-1 == data) {
+                if (-1 == data) {
                     $("#import_key__error").text("Public Key không hợp lệ!")
-                    $('#confirmBtn3').removeClass('loading');
-                    $('#confirmBtn3').prop("disabled", false);
+                    confirmBtn3.removeClass('loading');
+                    confirmBtn3.prop("disabled", false);
                 }
-                if(2 == data) {
+                if (2 == data) {
                     $("#import_key__error").text("Không thể import Public Key!")
-                    $('#confirmBtn3').removeClass('loading');
-                    $('#confirmBtn3').prop("disabled", false);
+                    confirmBtn3.removeClass('loading');
+                    confirmBtn3.prop("disabled", false);
                 }
-                if(3 == data) {
+                if (3 == data) {
                     $("#import_key__error").text("Đã xảy ra lỗi!")
-                    $('#confirmBtn3').removeClass('loading');
-                    $('#confirmBtn3').prop("disabled", false);
+                    confirmBtn3.removeClass('loading');
+                    confirmBtn3.prop("disabled", false);
                 }
             },
             error: function (data) {
                 console.log(data);
-                $('#confirmBtn3').removeClass('loading');
-                $('#confirmBtn3').prop("disabled", false);
+                confirmBtn3.removeClass('loading');
+                confirmBtn3.prop("disabled", false);
             },
         });
     });
 
     $("#change-email__form").submit(function (e) {
         e.preventDefault();
-        $('#confirmBtn_2').addClass('loading');
-        $('#confirmBtn_2').prop("disabled", true);
+        var confirmBtn_2 = $('#confirmBtn_2');
+        confirmBtn_2.addClass('loading');
+        confirmBtn_2.prop("disabled", true);
         var formData = new FormData(this);
         $.ajax({
             type: $(this).attr('method'),
@@ -659,24 +689,25 @@
             processData: false,
             success: function (data) {
                 console.log(data)
-                if(data == 1) {
+                if (data == 1) {
                     alert("Thay đổi Email thành công!")
                     window.location.href = "./account";
-                } if(data == 2) {
-                    alert("Email cũ không đúng!")
-                    $('#confirmBtn_2').removeClass('loading');
-                    $('#confirmBtn_2').prop("disabled", false);
                 }
-                if(data == 3) {
+                if (data == 2) {
+                    alert("Email cũ không đúng!")
+                    confirmBtn_2.removeClass('loading');
+                    confirmBtn_2.prop("disabled", false);
+                }
+                if (data == 3) {
                     alert("Không thể Verify!")
-                    $('#confirmBtn_2').removeClass('loading');
-                    $('#confirmBtn_2').prop("disabled", false);
+                    confirmBtn_2.removeClass('loading');
+                    confirmBtn_2.prop("disabled", false);
                 }
             },
             error: function (data) {
                 alert("Private key không đúng!")
-                $('#confirmBtn_2').removeClass('loading');
-                $('#confirmBtn_2').prop("disabled", false);
+                confirmBtn_2.removeClass('loading');
+                confirmBtn_2.prop("disabled", false);
                 console.log(data);
             },
         });
@@ -727,7 +758,7 @@
         var fileImport = document.getElementById("file-import");
         var importTypeHidden = document.getElementById("import-type-hidden");
 
-        if (importType === "text") {
+        if (importType == "text") {
             textImport.style.display = "block";
             fileImport.style.display = "none";
             importTypeHidden.value = "text";
@@ -741,14 +772,14 @@
     function validateForm() {
         var importType = document.getElementById("import-type-hidden").value;
 
-        if (importType === "text") {
+        if (importType == "text") {
             // Kiểm tra và xử lý dữ liệu từ trường nhập key bằng text
             var textPublicKey = document.getElementById("text_publickey").value;
             // Thêm logic kiểm tra textPublicKey nếu cần thiết
         } else {
             // Kiểm tra và xử lý dữ liệu từ trường nhập key bằng file
             var fileInput = document.getElementById("file_publickey");
-            if (fileInput.files.length === 0) {
+            if (fileInput.files.length == 0) {
                 alert("Vui lòng chọn một file private key.");
                 return false;
             }
