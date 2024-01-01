@@ -23,7 +23,7 @@ public class UpdateStatusController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         int status = Integer.parseInt(request.getParameter("status"));
-        String logisticId = request.getParameter("logisticId");
+//        String logisticId = request.getParameter("logisticId");
         OrderService orderService = new OrderService();
 
         HttpSession session = request.getSession(true);
@@ -37,7 +37,7 @@ public class UpdateStatusController extends HttpServlet {
             response.getWriter().write("1");
         } else if (status == 2) {
             orderService.updateStatus(id, status);
-            orderService.insertOrderLogistic(id, logisticId);
+//            orderService.insertOrderLogistic(id, logisticId);
             orderService.logOrder(id, "admin", admin.getId(), status);
             response.getWriter().write("2");
         } else if (status == 3) {

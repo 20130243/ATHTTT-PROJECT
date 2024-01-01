@@ -69,13 +69,14 @@
 
 /* Style the modal content */
 .modal-content {
+    top: 50%;
     background-color: #fff;
-    margin: 15% auto;
-    padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    max-width: 400px;
-    position: relative;
+    max-width: 800px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
 }
 
 /* Style the close button */
@@ -93,3 +94,10 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 800px !important;
+    }
+}
+

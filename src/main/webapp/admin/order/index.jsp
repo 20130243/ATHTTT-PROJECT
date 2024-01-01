@@ -79,11 +79,11 @@
                                                 <label for="status-select" class="mr-2">Tình trạng đơn hàng</label>
                                                 <select class="custom-select" id="status-select">
                                                     <option selected>Chọn...</option>
-                                                    <option value="1">Đang chờ</option>
-                                                    <option value="2">Đã xác nhận</option>
-                                                    <option value="3">Đang vận chuyển</option>
-                                                    <option value="4">Thành công</option>
-                                                    <option value="5">Đã hủy</option>
+                                                    <option value="0">Đang chờ</option>
+                                                    <option value="1">Đã xác nhận</option>
+                                                    <option value="2">Đang vận chuyển</option>
+                                                    <option value="3">Thành công</option>
+                                                    <option value="4">Đã hủy</option>
                                                 </select>
                                             </div>
                                         </form>
@@ -133,15 +133,15 @@
                                                 <td>
                                                     <h5>
                                                         <c:choose>
-                                                            <c:when test="${item.status eq 1}">
+                                                            <c:when test="${item.status eq 0}">
                                                                 <span class="badge badge-light">Đang chờ</span>
                                                             </c:when>
-                                                            <c:when test="${item.status eq 2}">
+                                                            <c:when test="${item.status eq 1}">
                                                                 <span class="badge badge-info">Đang chuẩn bị</span>
-                                                            </c:when><c:when test="${item.status eq 3}">
+                                                            </c:when><c:when test="${item.status eq 2}">
                                                                 <span class="badge badge-info-lighten">Đang vận chuyển</span>
                                                             </c:when>
-                                                            <c:when test="${item.status eq 4}">
+                                                            <c:when test="${item.status eq 3}">
                                                                 <span class="badge badge-success">Thành công</span>
                                                             </c:when>
                                                             <c:otherwise>
