@@ -654,6 +654,13 @@
       fileNameElement.classList.add('fileName');
       fileNameElement.textContent = fileName;
 
+      if (fileName.length > 24) {
+        fileNameElement.textContent = fileName.substring(0, 21) + '...';
+        fileNameElement.title = fileName;
+      } else {
+        fileNameElement.textContent = fileName;
+      }
+
       const removeButton = document.createElement('span');
       removeButton.classList.add('removeFile');
       removeButton.textContent = 'x';
