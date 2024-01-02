@@ -47,19 +47,25 @@ public class OrderController extends HttpServlet {
             String address = addressUser + "-" + addressCity + "-" + addressDistrict + "-" + addressWard;
 
             String message = (nameUser.trim() + phoneUser.trim() + address.trim() + noteUser.trim() + total);
-            Part filePart = request.getPart("fileInput");
-            String content_file = keyService.readFile(filePart).trim();
+            String content_file;
+            String key_text = request.getParameter("privatekey_text");
+            if (key_text.isEmpty() || key_text.isBlank()) {
+                Part filePart = request.getPart("fileInput");
+                  content_file = keyService.readFile(filePart).trim();
+            }else{
+                content_file = key_text.trim()  ;
+            }
+
             boolean verify = false;
             String sign = "";
             try {
                 String hash_message = keyService.hashString(message);
                 sign = keyService.sign(hash_message, KeyService.stringToPrivateKey(content_file));
-                verify = keyService.verify(hash_message,sign, KeyService.stringToPublicKey(key.getPublicKey()));
+                verify = keyService.verify(hash_message, sign, KeyService.stringToPublicKey(key.getPublicKey()));
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
             }
-
 
 
             if (nameUser.equals("") || phoneUser.equals("") || addressUser.equals("")) {
@@ -93,7 +99,7 @@ public class OrderController extends HttpServlet {
                     session.removeAttribute("cart");
                     response.getWriter().write("0");
                 }
-                }
+            }
         } else if (user == null) {
             response.getWriter().write("2");
         }

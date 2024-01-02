@@ -73,7 +73,17 @@ public class KeyDAO {
 
     public static void main(String[] args) {
         KeyDAO k = new KeyDAO();
-        System.out.println(k.getByOrderId(32));
+        System.out.println(k.checkExist("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6Jv5e6iyahLYxDJKWzfChk6cXjkTFih3Vzl9RvyzYpeIF3htZ+vmiBUJ8RVwNA+2EdxFJ4pe1/RIURI+JGKELud3RB2Lr96TbHU0AV2IMmTtO73nqQz6iaZVi4h71txiy4vR1OJA1Pyy0MWI9jMTMYvxIkzNMBxaspXSox5n41JgQDOu0QsQzt8IKzRCANTrp7jGVLF1F1RYL6furx0UDsexU3j4ZY8XW6UDQOFv4NWw8E4mNGpwWSz3vBsF2ISVckeOMy5/YiCoshR4lMepeUHqSPCA9o8GuwKa4EfCjN5dAfDrGHmuljEF826u9v8zA0xl0JuBjtyk7TaSiv8XQIDAQAB"));
+    }
 
+    public boolean checkExist(String publicKey) {
+        return JDBIConnector.get().withHandle(h -> {
+            Integer count = h.createQuery("SELECT count(*) from `" + tableName + "` WHERE public_key = :publicKey")
+                    .bind("publicKey", publicKey)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(0);
+            return count > 0;
+        });
     }
 }

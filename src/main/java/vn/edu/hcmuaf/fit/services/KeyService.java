@@ -279,7 +279,9 @@ public class KeyService {
         }
         return res;
     }
-
+public boolean checkExist(String publicKey){
+        return keyDAO.checkExist(transformKeyValue(publicKey));
+}
     public static String transformKeyValue(String key) {
         key = key.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         key = key.replace("-----END RSA PRIVATE KEY-----", "");
