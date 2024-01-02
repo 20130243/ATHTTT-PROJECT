@@ -291,6 +291,7 @@
                                         đây</label>
                                     <span>Hoặc</span>
                                     <textarea  style="width: 100%;height: 99px;" name="privatekey_text" id="privatekey_text" placeholder="Nhập key của bạn" data-toggle="tooltip" data-placement="top" title="Nhập Private Key của bạn với thuật toán RSA và độ dài 2048, thường là 1624 kí tự"></textarea>
+                                    <a style="    background-color: bisque;" href="./account">Bạn mất private key, bạn muốn cấp lại?</a>
                                 </div>
 
                                 <div class="row">
