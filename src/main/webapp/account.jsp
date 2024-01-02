@@ -213,6 +213,7 @@
                                                                         <option value="file">Nhập key bằng file</option>
                                                                     </select>
 
+                                                                    <p>*Lưu ý: Hãy nhập khóa public key với thuật toán RSA và độ dài 2048 bit. Hãy chắc chắn rằng định dạng đúng và khóa hợp lệ để đảm bảo tính an toàn và chính xác trong quá trình import.</p>
                                                                     <!-- Phần nhập key bằng text -->
                                                                     <div id="text-import" style="display: block;">
                                                                         <label for="text_publickey">Nhập Public
@@ -226,7 +227,6 @@
                                                                                 placeholder="Dán key vào đây"
                                                                         ></textarea>
                                                                     </div>
-
                                                                     <!-- Phần nhập key bằng file -->
                                                                     <div id="file-import" style="display: none;">
                                                                         <label for="file_publickey">Chọn File Public
@@ -240,11 +240,21 @@
                                                                                 onchange="validateFile()"
                                                                         />
                                                                     </div>
-
+                                                                    <label for="file_privatekey_old">Chọn Private Key cũ:</label>
+                                                                    <input
+                                                                            id="file_privatekey_old"
+                                                                            type="file"
+                                                                            name="private-key-old"
+                                                                            title="Private key"
+                                                                            accept=".key"
+                                                                            onchange="validateFile()"
+                                                                            required
+                                                                    />
                                                                     <!-- Trường ẩn để lưu loại nhập liệu -->
                                                                     <input type="hidden" id="import-type-hidden"
                                                                            name="import-type" value="text">
 
+                                                                    <span class="text-danger" id="file-error-import"></span>
                                                                     <button id="confirmBtn3"
                                                                             class="submit-button-lost-sign">Xác nhận
                                                                     </button>
@@ -657,7 +667,7 @@
                     confirmBtn3.prop("disabled", false);
                 }
                 if (2 == data) {
-                    $("#import_key__error").text("Không thể import Public Key!")
+                    $("#import_key__error").text("Private Key cũ không đúng!")
                     confirmBtn3.removeClass('loading');
                     confirmBtn3.prop("disabled", false);
                 }
@@ -727,6 +737,25 @@
     const validateFile = () => {
         var fileInput = document.querySelector('input[name="private-key"]');
         var errorSpan = document.getElementById('file-error');
+
+        // Kiểm tra nếu có file được chọn
+        if (fileInput.files.length > 0) {
+            var fileName = fileInput.files[0].name;
+
+            // Kiểm tra nếu tên file không kết thúc bằng ".key"
+            if (!fileName.endsWith('.key')) {
+                errorSpan.innerText = 'Vui lòng chọn file có đuôi ".key"';
+                fileInput.value = ''; // Xóa giá trị file nếu không hợp lệ
+                return;
+            }
+        }
+
+        // Nếu không có lỗi, xóa thông báo lỗi
+        errorSpan.innerText = '';
+    }
+    const validateFile2 = () => {
+        var fileInput = document.querySelector('input[name="private-key-old"]');
+        var errorSpan = document.getElementById('file-error-immport');
 
         // Kiểm tra nếu có file được chọn
         if (fileInput.files.length > 0) {

@@ -72,7 +72,8 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="header-title">Cập nhật sản phẩm</h4>
-                                <form id="update_form" action="${pageContext.request.contextPath}/admin/product/update" method="post"
+                                <form id="update_form" action="${pageContext.request.contextPath}/admin/product/update"
+                                      method="post"
                                       enctype="multipart/form-data">
                                     <div class="row">
                                         <input type="hidden" name="id" id="id"
