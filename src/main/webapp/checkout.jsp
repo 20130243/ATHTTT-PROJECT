@@ -246,7 +246,7 @@
                                             <p>Tỉnh/Thành phố<span>*</span></p>
                                             <select name="addressCity" class="nice-select" id="addressCity" required>
                                                 <option>--Chọn--</option>
-                                                <option value="Hồ Chí Minh" id="202">Hồ Chí Minh</option>
+                                                <option value="79">Thành phố Hồ Chí Minh</option>
                                             </select>
                                         </div>
                                     </div>
@@ -368,7 +368,8 @@
 
 <!-- Js Plugins -->
 <script src="js/jquery-3.6.0.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="js/account/bootstrap.min.js"></script>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/jquery.magnific-popup.min.js"></script>
@@ -415,151 +416,46 @@
             }
         })
 
-        //--------------------------
-        //--------------------------
-        // What to do when the response is ready
-        fetch('http://140.238.54.136/api/auth/login', {
-            method: "POST", // *GET, POST, PUT, DELETE, etc.
-            mode: "cors", // no-cors, *cors, same-origin
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(
-                {
-                    email: 'thaha8788@gmail.com',
-                    password: '123456'
-                }
-            )
-        })
-            .then((response) => {
-                return response.json()
-            })
-            .then((data) => {
-                const accessToken = data.access_token
-                localStorage.setItem('accessToken', accessToken)
-            })
-        var changeCity = $("#addressCity");
-        var changeDistrict = $("#addressDistrict");
-        var changeWard = $("#addressWard");
-        changeCity.on('change', function (e) {
-            changeDistrict.empty();
-            var idValueSelected = $(this).children(":selected").attr("id");
-            // console.log(idValueSelected)
-            fetch('http://140.238.54.136/api/district' + "?provinceID=" + idValueSelected, {
-                method: "GET", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, *cors, same-origin
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem('accessToken'),
-                },
-            })
+
+
+        const host = "https://provinces.open-api.vn/api/";
+        // var callAPI = (api) => {
+        //     return axios.get(api)
+        //         .then((response) => {
+        //             renderData(response.data, "addressCity");
+        //         });
+        // }
+        // callAPI('https://provinces.open-api.vn/api/?depth=1');
+        var callApiDistrict = (api) => {
+            return axios.get(api)
                 .then((response) => {
-                    return response.json()
-                })
-                .then((data) => {
-                    let districtDatas = data.original.data;
-                    changeDistrict.append(`<option value="" >--Chọn--</option>`)
-
-                    districtDatas.map((district, index) => {
-                        changeDistrict.append(`<option value="` + district.DistrictName + `" id="` + district.DistrictID + `">` + district.DistrictName + `</option>`)
-                    })
-                })
-        })
-        changeDistrict.on('change', function (e) {
-            changeWard.empty();
-            var idValueSelected = $(this).children(":selected").attr("id");
-            // console.log(idValueSelected)
-            fetch('http://140.238.54.136/api/ward' + "?districtID=" + idValueSelected, {
-                method: "GET", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, *cors, same-origin
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem('accessToken'),
-                },
-            })
+                    renderData(response.data.districts, "addressDistrict");
+                });
+        }
+        var callApiWard = (api) => {
+            return axios.get(api)
                 .then((response) => {
-                    return response.json()
-                })
-                .then((data) => {
-                    let wardDatas = data.original.data;
-                    changeWard.append(`<option value="" >--Chọn--</option>`)
-                    wardDatas.map((ward, index) => {
-                        changeWard.append(`<option value="` + ward.WardName + `" id="` + ward.WardCode + `">` + ward.WardName + `</option>`)
-                    })
-                })
-        })
+                    renderData(response.data.wards, "addressWard");
+                });
+        }
 
+        var renderData = (array, select) => {
 
-        changeWard.on('change', async function (e) {
-            let idWardValueSelected = $(this).children(":selected").attr("id");
-            let idDistrictValueSelected = changeDistrict.children(":selected").attr("id");
-            var details = {
-                'from_district_id': idDistrictFrom,
-                'from_ward_id': idWardFrom,
-                'to_district_id': idDistrictValueSelected,
-                'to_ward_id': idWardValueSelected,
-                'height': (sizeM.height * numOfSizeM) + (sizeL.height * numOfSizeL),
-                'length': (sizeM.length * numOfSizeM) + (sizeL.length * numOfSizeL),
-                'width': (sizeM.width * numOfSizeM) + (sizeL.width * numOfSizeL),
-                'weight': (sizeM.weight * numOfSizeM) + (sizeL.weight * numOfSizeL)
-            };
+            let row = ' <option disable value="">chọn</option>';
+            array.forEach(element => {
+                row += '<option value="' + element.code + '">' + element.name + '</option>';
+            });
+            document.querySelector("#" + select).innerHTML = row;
+        }
 
-            var formBody = [];
-            for (var property in details) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(details[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
-            // get fee logistic
-            await fetch('http://140.238.54.136/api/calculateFee', {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                // mode: "cors",
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    "Authorization": "Bearer " + localStorage.getItem('accessToken'),
-                }, body: formBody
-            })
-                .then((response) => {
-                    return response.json()
-                })
-                .then((datas) => {
-                    let moneyLogistic = datas.data[0].service_fee;
-                    const price_logistic_p = document.getElementById('price_logistic_p')
-                    const price_logistic_span = price_logistic_p.getElementsByTagName('span')[0]
-                    const price_logistic_input = price_logistic_p.getElementsByTagName('input')[0]
-                    price_logistic_input.value = moneyLogistic
-                    price_logistic_span.innerText = new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(moneyLogistic)
-
-                })
-
-            //get time logistic
-            await fetch('http://140.238.54.136/api/leadTime', {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                // mode: "cors",
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    "Authorization": "Bearer " + localStorage.getItem('accessToken'),
-                }, body: formBody
-            })
-                .then((response) => {
-                    return response.json()
-                })
-                .then((datas) => {
-
-                    let timeLogistic = datas.data[0].formattedDate;
-
-
-                    const time_logistic_p = document.getElementById('time_logistic_p')
-                    const time_logistic_span = time_logistic_p.getElementsByTagName('span')[0]
-
-                    time_logistic_span.innerText = timeLogistic;
-
-                })
-
-
-        })
+        $("#addressCity").change(() => {
+            console.log($("#addressCity").val());
+            callApiDistrict(host + "p/" + $("#addressCity").val() + "?depth=2");
+        });
+        $("#addressDistrict").change(() => {
+            console.log($("#addressDistrict").val());
+            callApiWard(host + "d/" + $("#addressDistrict").val() + "?depth=2");
+        });
 
     })
     $(document).ready(function () {
@@ -625,6 +521,9 @@
                 }
                 if (1 == data) {
                     alert('Vui lòng điền đủ thông tin');
+                }
+                if (5 == data) {
+                    alert('Vui lòng chọn khoá của bạn');
                 }
                 if (3 == data) {
                     alert('Khóa của bạn không dúng. Hãy kiểm tra lại khóa!');
