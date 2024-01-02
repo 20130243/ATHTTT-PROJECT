@@ -63,6 +63,8 @@ public class OrderController extends HttpServlet {
                 sign = keyService.sign(hash_message, KeyService.stringToPrivateKey(content_file));
                 verify = keyService.verify(hash_message, sign, KeyService.stringToPublicKey(key.getPublicKey()));
             } catch (Exception e) {
+
+                response.getWriter().write("5");
                 e.printStackTrace();
                 throw new RuntimeException("Error occurred during sign or verify process: " + e.getMessage());
             }
