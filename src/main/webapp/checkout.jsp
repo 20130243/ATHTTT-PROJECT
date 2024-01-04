@@ -530,6 +530,9 @@
                 }
             },
             error: function (data) {
+                if (5 == data) {
+                    alert('Vui lòng chọn khoá của bạn');
+                }
                 console.log(data);
                 console.log('An error occurred.');
             },
