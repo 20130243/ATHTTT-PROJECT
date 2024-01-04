@@ -65,39 +65,52 @@ public class OrderController extends HttpServlet {
                 if (nameUser.equals("") || phoneUser.equals("") || addressUser.equals("")) {
 //                System.out.println("sign: " + sign);
 //                System.out.println("checkverify :" + verify);
-                    response.getWriter().write("1");
-                } else {
+ 
+                response.getWriter().write("1");
+            } else
+            {
+                Order order = new Order();
+                order.setUser_id(user.getId());
+                order.setName(nameUser);
+                order.setPhone(phoneUser);
+                order.setAddress(address);
+                order.setNote(noteUser);
+//                    List<Item> listItems = cart.getItems();
+                order.setListItems(listItems);
+                order.setCoupon(cart.getCoupon());
+                order.setTotal(cart.getTotalMoney() + priceLogistic);
+
+                boolean verify = false;
+                String sign = "";
+                try {
+                    String message = order.bill();
+                    System.out.println(message);
+                    String hash_message = keyService.hashString(message);
+                    sign = keyService.sign(hash_message, KeyService.stringToPrivateKey(content_file));
+                    verify = keyService.verify(hash_message, sign, KeyService.stringToPublicKey(key.getPublicKey()));
+                    order.setHash_message(sign);
+                    order.setKey_id(key_id);
+
                     if (!verify) {
                         response.getWriter().write("3");
-                    } else
-                    {
-                        System.out.println("sign1" + sign);
-                        System.out.println("checkverify2 :" + verify);
-                        Order order = new Order();
-                        order.setUser_id(user.getId());
-                        order.setName(nameUser);
-                        order.setPhone(phoneUser);
-                        order.setAddress(address);
-                        order.setNote(noteUser);
-                        List<Item> listItems = cart.getItems();
-                        order.setListItems(listItems);
-                        order.setCoupon(cart.getCoupon());
-                        order.setTotal(cart.getTotalMoney() + priceLogistic);
-                        order.setHash_message(sign);
-                        order.setKey_id(key_id);
+                    } else {
+                        System.out.println("sign1 " + sign);
+                        System.out.println("checkverify2 :" + verify); 
                         try {
                             cartOrderService.addOrder(order);
                             new OrderService().logOrder(cartOrderService.getOrderFirst().getId(), "user", user.getId(), 0);
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
-                        }
-                        session.removeAttribute("cart");
+                        } session.removeAttribute("cart");
                         response.getWriter().write("0");
                     }
+                } catch (Exception e) {
+                    response.getWriter().write("5");
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.getWriter().write("5");
+
+
+  
             }
 
 
