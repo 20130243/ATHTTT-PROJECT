@@ -65,8 +65,7 @@ public class PriceSize implements Serializable {
     @Override
     public String toString() {
         return "PriceSize{" +
-                "id=" + id +
-                ", product_id=" + product_id +
+                " product_id=" + product_id +
                 ", size='" + size + '\'' +
                 ", price=" + price +
                 ", originalPrice=" + originalPrice +
