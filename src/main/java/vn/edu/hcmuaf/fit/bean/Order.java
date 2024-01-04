@@ -196,3 +196,5 @@ public class Order implements Serializable {
         return name.trim() + phone.trim() + address.trim() + note.trim() + itemBill.toString() + total;
     }
 }
+//ô mai0344558307s-Thành phố Hồ Chí Minh-Quận 8-Phường 15 Trà Xoài Bưởi Hồng Kem Phô Mai,40000.0,1,56000.0;ha   ,32000.0,1,32000.0;88000.0
+//ô mai0344558307s-Thành phố Hồ Chí Minh-Quận 8-Phường 15ha   ,32000.0,1,32000.0; Trà Xoài Bưởi Hồng Kem Phô Mai,40000.0,1,56000.0;88000.0

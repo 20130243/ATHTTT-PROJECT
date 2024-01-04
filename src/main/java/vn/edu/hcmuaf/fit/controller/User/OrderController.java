@@ -80,6 +80,7 @@ public class OrderController extends HttpServlet {
                 String sign = "";
                 try {
                     String message = order.bill();
+                    System.out.println(order.toString());
                     System.out.println(message);
                     String hash_message = keyService.hashString(message);
                     sign = keyService.sign(hash_message, KeyService.stringToPrivateKey(content_file));

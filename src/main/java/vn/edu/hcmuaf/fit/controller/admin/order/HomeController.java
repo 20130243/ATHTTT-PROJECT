@@ -44,6 +44,7 @@ public class HomeController extends HttpServlet {
                 int total = (int) order.getTotal();
                 int status = order.getStatus();
                 String bill = order2.bill();
+                System.out.println(order2.toString());
                 System.out.println(bill);
                 String hash_message = order.getHash_message();
                 Key key = keyService.getKeyByOrderId(id);

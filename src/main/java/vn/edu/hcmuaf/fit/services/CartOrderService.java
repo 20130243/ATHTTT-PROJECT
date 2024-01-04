@@ -146,7 +146,7 @@ public class CartOrderService {
         List<Item> items = new ArrayList<Item>();
         List<Map<String, Object>> listMap = detail_dao.getByOrderId(orderId);
         if (listMap.size() > 0) {
-            for (int i = 0; i < listMap.size(); i++) {
+            for (int i = listMap.size()-1; i >= 0; i--) {
                 Item item = new Item();
                 Product product = new Product();
                 int priceSizeId = (int) listMap.get(i).get("product_size_id");
