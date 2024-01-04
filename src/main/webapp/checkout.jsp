@@ -246,7 +246,9 @@
                                             <p>Tỉnh/Thành phố<span>*</span></p>
                                             <select name="addressCity" class="nice-select" id="addressCity" required>
                                                 <option>--Chọn--</option>
-                                                <option value="79">Thành phố Hồ Chí Minh</option>
+                                                <option data-id="79" value="Thành phố Hồ Chí Minh">Thành phố Hồ Chí
+                                                    Minh
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -290,8 +292,12 @@
                                     <label for="fileInput" class="custom-label" id="fileLabel">Thêm file key của bạn tại
                                         đây</label>
                                     <span>Hoặc</span>
-                                    <textarea  style="width: 100%;height: 99px;" name="privatekey_text" id="privatekey_text" placeholder="Nhập key của bạn" data-toggle="tooltip" data-placement="top" title="Nhập Private Key của bạn với thuật toán RSA và độ dài 2048, thường là 1624 kí tự"></textarea>
-                                    <a style="    background-color: bisque;" href="./account">Bạn mất private key, bạn muốn cấp lại?</a>
+                                    <textarea style="width: 100%;height: 99px;" name="privatekey_text"
+                                              id="privatekey_text" placeholder="Nhập key của bạn" data-toggle="tooltip"
+                                              data-placement="top"
+                                              title="Nhập Private Key của bạn với thuật toán RSA và độ dài 2048, thường là 1624 kí tự"></textarea>
+                                    <a style="    background-color: bisque;" href="./account">Bạn mất private key, bạn
+                                        muốn cấp lại?</a>
                                 </div>
 
                                 <div class="row">
@@ -368,8 +374,12 @@
 
 <!-- Js Plugins -->
 <script src="js/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+        integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="js/account/bootstrap.min.js"></script>
 <script src="js/jquery.nicescroll.min.js"></script>
 <script src="js/jquery.magnific-popup.min.js"></script>
@@ -417,7 +427,6 @@
         })
 
 
-
         const host = "https://provinces.open-api.vn/api/";
         // var callAPI = (api) => {
         //     return axios.get(api)
@@ -440,21 +449,19 @@
         }
 
         var renderData = (array, select) => {
-
             let row = ' <option disable value="">chọn</option>';
             array.forEach(element => {
-                row += '<option value="' + element.code + '">' + element.name + '</option>';
+                row += '<option value="' + element.name + '" data-id="' + element.code + '">' + element.name + '</option>';
             });
             document.querySelector("#" + select).innerHTML = row;
         }
-
         $("#addressCity").change(() => {
             console.log($("#addressCity").val());
-            callApiDistrict(host + "p/" + $("#addressCity").val() + "?depth=2");
+            callApiDistrict(host + "p/" + $("#addressCity option:selected").data("id") + "?depth=2");
         });
         $("#addressDistrict").change(() => {
             console.log($("#addressDistrict").val());
-            callApiWard(host + "d/" + $("#addressDistrict").val() + "?depth=2");
+            callApiWard(host + "d/" + $("#addressDistrict option:selected").data("id") + "?depth=2");
         });
 
     })
@@ -625,7 +632,7 @@
     function checkForm() {
         var fileInput = document.getElementById("fileInput");
 
-        if (fileInput.files.length === 0 && $('#privatekey_text').lengh() === 0  ) {
+        if (fileInput.files.length === 0 && $('#privatekey_text').lengh() === 0) {
             alert("Vui lòng chọn một file private key!");
             return false;
         } else {
