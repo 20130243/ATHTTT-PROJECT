@@ -136,12 +136,12 @@ public class Order implements Serializable {
 //    }
 
     public void setTotal() {
-        if(this.listItems.size() > 0) {
+        if (this.listItems.size() > 0) {
             for (Item item : this.listItems) {
                 this.total += item.getPrice();
             }
         } else {
-             this.total = 0;
+            this.total = 0;
         }
     }
 
@@ -172,19 +172,27 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + id +
-                ", user_id=" + user_id +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", time=" + time +
-                ", note='" + note + '\'' +
-                ", coupon=" + coupon +
-                ", listItems=" + listItems +
+//                "id=" + id +
+//                ", user_id=" + user_id +
+                ", name='" + name.toString() + '\'' +
+                ", phone='" + phone.toString() + '\'' +
+                ", address='" + address.toString() + '\'' +
+//                ", time=" + time +
+                ", note='" + note.toString() + '\'' +
+//                ", coupon=" + coupon +
+//                ", listItems=" + listItems +
                 ", total=" + total +
-                ", status=" + status +
-                ", hash_message='" + hash_message + '\'' +
-                ", key_id=" + key_id +
+//                ", status=" + status +
+//                ", hash_message='" + hash_message + '\'' +
+//                ", key_id=" + key_id +
                 '}';
+    }
+
+    public String bill() {
+        StringBuilder itemBill = new StringBuilder();
+        for (Item item : listItems) {
+            itemBill.append(item.bill()).append(";");
+        }
+        return name.trim() + phone.trim() + address.trim() + note.trim() + itemBill.toString() + total;
     }
 }

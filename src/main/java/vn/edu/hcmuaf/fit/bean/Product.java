@@ -15,6 +15,7 @@ public class Product implements Serializable {
     List<Image> image;
     int status;
     List<Topping> topping;
+
     public List<Topping> getTopping() {
         return topping;
     }
@@ -101,14 +102,17 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                " name='" + name + '\'' +
                 ", idCategory=" + idCategory +
                 ", priceSize=" + priceSize +
                 ", image=" + image +
                 ", status=" + status +
                 ", topping=" + topping +
                 '}';
+    }
+
+    public String bill() {
+        return name + "," + priceSize.get(0).getPrice();
     }
 
     public void addPriceSize(PriceSize size) {
