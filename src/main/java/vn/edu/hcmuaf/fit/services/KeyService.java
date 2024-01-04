@@ -195,9 +195,12 @@ public class KeyService {
 
     public boolean verify(String messagehash, String signature, PublicKey publicKey) throws Exception {
         byte[] signatureBytes = Base64.getDecoder().decode(signature);
+        System.out.println(1);
         Signature sig = Signature.getInstance("MD5withRSA");
         sig.initVerify(publicKey);
+        System.out.println(2);
         sig.update(messagehash.getBytes());
+        System.out.println(3);
         return sig.verify(signatureBytes);
     }
 
@@ -279,9 +282,11 @@ public class KeyService {
         }
         return res;
     }
-public boolean checkExist(String publicKey){
+
+    public boolean checkExist(String publicKey) {
         return keyDAO.checkExist(transformKeyValue(publicKey));
-}
+    }
+
     public static String transformKeyValue(String key) {
         key = key.replace("-----BEGIN RSA PRIVATE KEY-----", "");
         key = key.replace("-----END RSA PRIVATE KEY-----", "");
@@ -291,6 +296,29 @@ public boolean checkExist(String publicKey){
         key = key.replace("-----END PRIVATE KEY-----", "");
         key = key.replace("\n", "");
         return key;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+
+        KeyService ks = new KeyService();
+        String pu = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnq6QTTe/+neIzrIeLgEZW0KjdYl4pC0v4oO1WAm4yY5nXXSOxab2YcdsODhMc8xeD3UfnmZWUu3hILs4NE1sh/QNJUr3oO02skuk7dVPvr0cyrv81O9OaptZOOMoZV/67IiC9NZqPIdmeRgYBH6TPUyFvrxqwwQ2P9GmXkz2Sd+WTpZm0Tsw3XzT/p3dgFvTAQbtSI5fZfsYSLYkWqRbIBcZDVcIBWdAMY3TjiBtOKppg8Bvr/j8jHfK8cSGpQn9JzGoO+4jr+IppZwMczhc7Kk1oDVWQxlVB6XNByHPh8KjaiYqa5JdAMSLeM+CTj0vDzon44g7yYfl5Hsj8f8VbQIDAQAB";
+        String pv = "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCerpBNN7/6d4jOsh4uARlbQqN1iXikLS/ig7VYCbjJjmdddI7FpvZhx2w4OExzzF4PdR+eZlZS7eEguzg0TWyH9A0lSveg7TayS6Tt1U++vRzKu/zU705qm1k44yhlX/rsiIL01mo8h2Z5GBgEfpM9TIW+vGrDBDY/0aZeTPZJ35ZOlmbROzDdfNP+nd2AW9MBBu1Ijl9l+xhItiRapFsgFxkNVwgFZ0AxjdOOIG04qmmDwG+v+PyMd8rxxIalCf0nMag77iOv4imlnAxzOFzsqTWgNVZDGVUHpc0HIc+HwqNqJiprkl0AxIt4z4JOPS8POifjiDvJh+XkeyPx/xVtAgMBAAECggEAA3VxnsVC0X5OhJbcUotilpsmvfafoxB7FThiuQcJOJd6iE50mDlR8IKsyLLtc662NCcM5+J6KjeWKyT5jiZL4dC/gpsWN7ND+HHup+J46QLtQDwFwExxDKDTOoq1BDSp3wMAu756tVQMN0J/r4VkxzbGSYiI2TRbzFtRAYgy7BxDPH67Z2zFvHBFb9Pomp0JhZrFCkudHEgZd1RHetEZBsXjYg82thkEBOy+iZr42nNRfRPoMfbQzUTMGNWecd8V1MVFSp76FmAVs7X3kNAilpeqgKCpewohiOJmznF38AHlfl4nTuM9kFefpxixOcibH4TE2lyaesJLLoc03kY+0QKBgQDLwTBQ4wnC+gAyzrEjqw0xelcDBTIHG3GQuYXfnZF0uziGO9RUdro0mwggGiK9jGfR71rdmNI4xoXKmCZaT+wTnarZlbeJqN0b0qSHSWjeBs0HxYRmE6JzgQbdLEd88irwSR8yOJHK6BWwXN1zd6Wu2Z6cc2EqQ5E7KAB54YaxaQKBgQDHXrhzRSrb+Yc5rSE/EjaAy4pvOXoFVg7+7N7xHtGETN7nahbywyS8Y2aGf6NIX3A2Mr8gUNrSdAdw3qROS1g1XlGpH9kbWmkg21wBwMISnWoBiXrjKBjIbxD4IFYtZx4bM7pqcAOgPTVDdXz6DehuLTRA9A7nWCBu6ZH65Bh/ZQKBgDFq5qQHnLt8VQX9mXr0JpwEdwwVe3+7yTx3sp98oOW17synwCTIMvtFSqA2loxwfFGvgtNSGFKK27I6Wrr2vWQ4jlJ9fGlX2mDAIwVo6ZVIAvxKjIURaAoplheYgLIuLfnfUkCk9b9HsNL4gwFZWIbi4xRA66ULhDLbzdnBuCBZAoGACCiuL7ly6ZGqoQeexq/+HwM1ZRvbDIDbGD+lWATE2j8zGBFVYxXtWPBQb8ylZ/7P3sfw3mewrNAmxc22t6WJtJVpjhxJjD8E8l1HxKKYzp42il2P89/eM8Wn0h+wpycDKmXRiS2QWGxo05vpQ2pySp/69XWHbpxCp4dTfAr9nakCgYAQ2uBXdbeO/6mL26o89uORN4n3dD/lRNCPS0XJ35D5s3myKrRZJ+4IQYnbQWP7QelIXx4JdSVXiMZwxyk7vQSuz7xVjRx1c/6T9SSiB445eCkdwIO1FncBj/yF21kPAwljetSrW+HUEpqvRRJFgkCPdHczzgSpnfld1qI0WtUgtw==";
+        PublicKey publicKey = KeyService.stringToPublicKey(pu);
+        PrivateKey privateKey = KeyService.stringToPrivateKey(pv);
+
+
+        String bill = "NGUYEN HUY HOANG0981003797?à-79-761-26767[Item{, product={id=126, name='Trà Xanh Gong Cha', idCategory=1, priceSize=[PriceSize{id=156, product_id=156, size='M', price=4800.0, originalPrice=38000.0}], image=[Image{id=115, name='null', url='/img/product/products/TraXanhGongCha.png', product_id=126, status=1}, Image{id=396, name='null', url='/img/product/products/phuc-long-1.jpg', product_id=126, status=1}], status=1, topping=[]}, quantity=1, price=4800.0, note=''}]4800.0";
+        String data = "MRz4hsv6D2pvhqogcOsbhUy4kaGvTWbDcZgfoav50TAFYfANgW9r1/KEko8QDmVXkjmZP3DYv+SvjICX2mDMvMNogCYT6rvKdltoMacBQAu6jXATJrhyDGTreehYivHPnHqVwQFE3My19uxBUf1Aa1Mmy3gqYatge1PDqHP1zdA+EoOZUIFjZ8VcgXOyVd2ono7FFP2CoUwFhe4mPSxl6VCh9N7nWPBKM0LlQgJVK3/3tddQ/4tZtaV0p+H40bGjAbozka6P8bH8+drznOrYPVA+M38r+4gJsBXXNtERsv4jWEX7bqbsufMaxNtIpV3M4CF1DoLpYwqRrtJ0VJo9WQ==";
+        String hash = ks.hashString(bill);
+        System.out.println(hash);
+        String signature = ks.sign(hash, privateKey);
+        System.out.println(signature);
+        boolean verify = ks.verify(hash, data, publicKey);
+        System.out.println(verify);
+
+        String a = "NGUYEN HUY HOANG0981003797as f-79-776-27421[Item{product={ name='Trà Xoài B??i H?ng', idCategory=1, priceSize=[PriceSize{id=110, product_id=110, size='M', price=5250.0, originalPrice=30000.0}], image=[Image{id=118, name='null', url='/img/product/products/TraXoaiBuoiHong.png', product_id=129, status=1}, Image{id=399, name='null', url='/img/product/products/phuc-long-1.jpg', product_id=129, status=1}], status=1, topping=[]}, quantity=1, price=5250.0, note=''}]5250.0\n";
+        String b = "NGUYEN HUY HOANG0981003797as f-79-776-27421[Item{product={ name='Trà Xoài B??i H?ng', idCategory=1, priceSize=[PriceSize{id=110, product_id=129, size='M', price=5250.0, originalPrice=30000.0}], image=[Image{id=118, name='null', url='/img/product/products/TraXoaiBuoiHong.png', product_id=129, status=1}, Image{id=399, name='null', url='/img/product/products/phuc-long-1.jpg', product_id=129, status=1}], status=1, topping=[]}, quantity=1, price=5250.0, note=''}]5250.0\n";
     }
 
 }

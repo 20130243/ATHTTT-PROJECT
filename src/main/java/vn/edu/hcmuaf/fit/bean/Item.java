@@ -11,7 +11,7 @@ public class Item implements Serializable {
 
     private String note;
 
-    public Item(){
+    public Item() {
         this.price = 0;
     }
 
@@ -63,12 +63,12 @@ public class Item implements Serializable {
         this.note = note;
     }
 
-    public void updatePrice(){
+    public void updatePrice() {
         Product product = this.getProduct();
         List<Topping> toppings = product.getTopping();
         float price = product.getPriceSize().get(0).getPrice();
-        if(toppings.size() > 0){
-            for(Topping topping : toppings){
+        if (toppings.size() > 0) {
+            for (Topping topping : toppings) {
                 price += topping.getPrice();
             }
         }
@@ -80,11 +80,14 @@ public class Item implements Serializable {
     @Override
     public String toString() {
         return "Item{" +
-                "id=" + id +
-                ", product=" + product +
+                "product=" + product +
                 ", quantity=" + quantity +
                 ", price=" + price +
                 ", note='" + note + '\'' +
                 '}';
+    }
+
+    public String bill() {
+        return product.bill() + "," + quantity + "," + price;
     }
 }
